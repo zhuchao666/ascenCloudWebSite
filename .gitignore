@@ -73,9 +73,6 @@ coverage/
 # package-lock.json
 
 # ============================================
-# Agent / Skill files (本地开发工具配置)
+# CodeBuddy 本地数据（不需要同步）
 # ============================================
-.agents/
 .codebuddy/
-skills/
-skills-lock.json

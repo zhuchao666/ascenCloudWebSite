@@ -46,15 +46,29 @@ const canvasStyle: React.CSSProperties = {
 interface CloudBackgroundProps {
   /** 纹理加载完成回调 */
   onTextureLoaded?: () => void;
+  /** 是否暂停渲染（首屏淡出后暂停以节省 GPU 资源） */
+  paused?: boolean;
 }
 
-const CloudBackground = ({ onTextureLoaded }: CloudBackgroundProps) => {
+const CloudBackground = ({ onTextureLoaded, paused = false }: CloudBackgroundProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<WebGLRenderer | null>(null);
   const uniformsRef = useRef<Record<string, IUniform> | null>(null);
   const clockRef = useRef<Clock | null>(null);
   const frameIdRef = useRef<number>(0);
+  const pausedRef = useRef(paused);
+  const animateRef = useRef<(() => void) | null>(null);
   const { update: updateMouse } = useSmoothMouse(0.03);
+
+  // 用 ref 存储回调和函数引用，避免它们进入 useEffect 依赖数组导致 Three.js 场景重建
+  const onTextureLoadedRef = useRef(onTextureLoaded);
+  onTextureLoadedRef.current = onTextureLoaded;
+
+  const updateMouseRef = useRef(updateMouse);
+  updateMouseRef.current = updateMouse;
+
+  // 同步 paused prop 到 ref
+  pausedRef.current = paused;
 
   /**
    * 处理窗口 resize
@@ -114,7 +128,7 @@ const CloudBackground = ({ onTextureLoaded }: CloudBackgroundProps) => {
     const textureLoader = new TextureLoader();
     const texture = textureLoader.load(`${basePath}/bg.png`, (tex) => {
       uniforms.uImgAspect.value = tex.image.width / tex.image.height;
-      onTextureLoaded?.();
+      onTextureLoadedRef.current?.();
     });
     texture.minFilter = LinearFilter;
     texture.magFilter = LinearFilter;
@@ -144,13 +158,19 @@ const CloudBackground = ({ onTextureLoaded }: CloudBackgroundProps) => {
     // 动画循环
     // ============================================
     const animate = () => {
+      // 暂停时停止循环（恢复由 useEffect 重启）
+      if (pausedRef.current) {
+        frameIdRef.current = 0;
+        return;
+      }
+
       frameIdRef.current = requestAnimationFrame(animate);
 
       // 时间传入 shader（驱动云卷云舒）
       uniforms.uTime.value = clock.getElapsedTime();
 
-      // 鼠标平滑 & 视差
-      const mouse = updateMouse();
+      // 鼠标平滑 & 视差（通过 ref 引用，避免依赖变化）
+      const mouse = updateMouseRef.current();
       uniforms.uMouse.value.set(
         (mouse.x - 0.5) * PARALLAX_X,
         -(mouse.y - 0.5) * PARALLAX_Y,
@@ -159,6 +179,8 @@ const CloudBackground = ({ onTextureLoaded }: CloudBackgroundProps) => {
       renderer.render(scene, camera);
     };
 
+    // 保存 animate 引用供外部恢复调用
+    animateRef.current = animate;
     animate();
 
     // ============================================
@@ -179,7 +201,18 @@ const CloudBackground = ({ onTextureLoaded }: CloudBackgroundProps) => {
       rendererRef.current = null;
       uniformsRef.current = null;
     };
-  }, [handleResize, onTextureLoaded, updateMouse]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleResize]);
+
+  /**
+   * paused 变化时恢复动画循环
+   * 从暂停恢复 → 重新启动 rAF 循环
+   */
+  useEffect(() => {
+    if (!paused && animateRef.current && frameIdRef.current === 0) {
+      animateRef.current();
+    }
+  }, [paused]);
 
   return (
     <canvas

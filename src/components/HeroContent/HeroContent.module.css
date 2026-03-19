@@ -13,6 +13,17 @@
   align-items: center;
   justify-content: center;
   pointer-events: none;
+  /* 过渡动画 — 点击按钮后整体淡出上移 */
+  transition:
+    opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 内容隐藏态 — 淡出并上移 */
+.contentHidden {
+  opacity: 0;
+  transform: translateY(-40px);
+  pointer-events: none;
 }
 
 /* 顶部标签 */
@@ -75,12 +86,6 @@
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.7);
   background: rgba(255, 255, 255, 0.1);
-}
-
-/* 按钮隐藏态 */
-.enterBtnHidden {
-  opacity: 0 !important;
-  pointer-events: none !important;
 }
 
 /* ============================================

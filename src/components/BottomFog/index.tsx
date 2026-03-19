@@ -128,7 +128,7 @@ const createFogParticle = (
   };
 };
 
-const BottomFog = () => {
+const BottomFog = ({ paused = false }: { paused?: boolean }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const texturesRef = useRef<HTMLCanvasElement[]>([]);
@@ -136,6 +136,11 @@ const BottomFog = () => {
   const lastTimeRef = useRef<number>(0);
   const frameIdRef = useRef<number>(0);
   const fogScaleRef = useRef<number>(1);
+  const pausedRef = useRef(paused);
+  const animateRef = useRef<((now: number) => void) | null>(null);
+
+  // 同步 paused prop 到 ref
+  pausedRef.current = paused;
 
   /**
    * 初始化并 resize 雾化 canvas 的尺寸（高 DPI 适配）
@@ -197,6 +202,12 @@ const BottomFog = () => {
     // 动画循环
     // ============================================
     const animate = (now: number) => {
+      // 暂停时停止循环（恢复由 useEffect 重启）
+      if (pausedRef.current) {
+        frameIdRef.current = 0;
+        return;
+      }
+
       frameIdRef.current = requestAnimationFrame(animate);
 
       const dt = now - lastTimeRef.current;
@@ -260,6 +271,8 @@ const BottomFog = () => {
       ctx.globalAlpha = 1;
     };
 
+    // 保存 animate 引用供暂停恢复调用
+    animateRef.current = animate;
     frameIdRef.current = requestAnimationFrame(animate);
 
     // ============================================
@@ -275,6 +288,16 @@ const BottomFog = () => {
       window.removeEventListener('resize', resizeFogCanvas);
     };
   }, [resizeFogCanvas]);
+
+  /**
+   * paused 变化时恢复动画循环
+   */
+  useEffect(() => {
+    if (!paused && animateRef.current && frameIdRef.current === 0) {
+      lastTimeRef.current = performance.now();
+      frameIdRef.current = requestAnimationFrame(animateRef.current);
+    }
+  }, [paused]);
 
   return (
     <div ref={containerRef} className={styles.bottomFog}>

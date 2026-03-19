@@ -1,0 +1,180 @@
+/* ============================================
+   关于我们模块 — 浅色背景
+   ============================================ */
+.section {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 2rem;
+  background: linear-gradient(
+    180deg,
+    #f5f3f0 0%,
+    #f0ede8 30%,
+    #ebe7e1 50%,
+    #f0ede8 70%,
+    #f5f3f0 100%
+  );
+  overflow: hidden;
+  /* GPU 合成层提升，避免与首屏 fixed 层频繁重合成 */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* 装饰分割线 */
+.divider {
+  width: 40px;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.2);
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  transform: scaleX(0);
+  transition:
+    opacity 1s ease-out,
+    transform 1s ease-out;
+}
+
+.dividerVisible {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* 顶部小标签 */
+.tag {
+  font-size: clamp(0.6rem, 0.9vw, 0.75rem);
+  font-weight: 500;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.4);
+  margin-bottom: 2rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.8s ease-out,
+    transform 0.8s ease-out;
+}
+
+.tagVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 大标题 */
+.title {
+  font-size: clamp(2.2rem, 6vw, 5rem);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+  text-align: center;
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 1s ease-out 0.15s,
+    transform 1s ease-out 0.15s;
+}
+
+.titleVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 英文副标题 */
+.subtitle {
+  font-size: clamp(0.65rem, 1vw, 0.85rem);
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.35);
+  margin-bottom: 3.5rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 1s ease-out 0.3s,
+    transform 1s ease-out 0.3s;
+}
+
+.subtitleVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 描述文本容器 */
+.description {
+  max-width: 680px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 1s ease-out 0.45s,
+    transform 1s ease-out 0.45s;
+}
+
+.descriptionVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.description p {
+  font-size: clamp(0.85rem, 1.2vw, 1rem);
+  font-weight: 400;
+  line-height: 2;
+  letter-spacing: 0.04em;
+  color: rgba(0, 0, 0, 0.55);
+  margin-bottom: 1.5rem;
+}
+
+.description p:last-child {
+  margin-bottom: 0;
+}
+
+/* 底部装饰点 */
+.dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.15);
+  margin-top: 3.5rem;
+  opacity: 0;
+  transition: opacity 1s ease-out 0.6s;
+}
+
+.dotVisible {
+  opacity: 1;
+}
+
+/* ============================================
+   响应式适配
+   ============================================ */
+@media (max-width: 768px) {
+  .section {
+    padding: 4rem 1.5rem;
+  }
+
+  .title {
+    letter-spacing: 0.03em;
+  }
+
+  .description {
+    max-width: 520px;
+  }
+
+  .description p {
+    line-height: 1.85;
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    padding: 3rem 1.2rem;
+  }
+
+  .description {
+    max-width: 100%;
+  }
+}

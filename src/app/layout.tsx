@@ -12,8 +12,8 @@ import './globals.css';
  */
 export const metadata: Metadata = {
   title: {
-    default: '出雲資本',
-    template: '%s | 出雲資本',
+    default: '出雲资本',
+    template: '%s | 出雲资本',
   },
   description: 'AscenCloud Investment — Sanctuary in the Sky',
 };

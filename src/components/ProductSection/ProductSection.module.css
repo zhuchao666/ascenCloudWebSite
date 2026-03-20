@@ -1,0 +1,596 @@
+/* ============================================
+   产品展示 + 合作伙伴模块
+   梯形卡片交错布局 + 底部合作伙伴
+   同屏布局（共享 100vh）
+   ============================================ */
+.section {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 3rem 2rem;
+  background: linear-gradient(
+    180deg,
+    #f5f3f0 0%,
+    #f0ede8 30%,
+    #ebe7e1 50%,
+    #f0ede8 70%,
+    #f5f3f0 100%
+  );
+  overflow: hidden;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* ============================================
+   标题区域
+   ============================================ */
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-shrink: 0;
+}
+
+/* 装饰分割线 */
+.divider {
+  width: 40px;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.2);
+  margin-bottom: 1rem;
+  opacity: 0;
+  transform: scaleX(0);
+  transition:
+    opacity 1s ease-out,
+    transform 1s ease-out;
+}
+
+.dividerVisible {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* 顶部小标签 */
+.tag {
+  font-size: clamp(0.6rem, 0.9vw, 0.75rem);
+  font-weight: 500;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.4);
+  margin-bottom: 0.8rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.8s ease-out,
+    transform 0.8s ease-out;
+}
+
+.tagVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 大标题 */
+.title {
+  font-size: clamp(1.8rem, 4.5vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+  text-align: center;
+  color: #1a1a1a;
+  margin: 0 0 0.5rem;
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 1s ease-out 0.15s,
+    transform 1s ease-out 0.15s;
+}
+
+.titleVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 英文副标题 */
+.subtitle {
+  font-size: clamp(0.6rem, 0.9vw, 0.8rem);
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 1s ease-out 0.3s,
+    transform 1s ease-out 0.3s;
+}
+
+.subtitleVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================
+   梯形卡片容器 — 相对定位，子卡片绝对定位
+   两张卡片交错排列，斜边平行
+   ============================================ */
+.cardContainer {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  height: 300px;
+  flex-shrink: 0;
+  /* 入场动画 */
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity 1s ease-out 0.4s,
+    transform 1s ease-out 0.4s;
+}
+
+.cardContainerVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================
+   梯形卡片通用样式
+
+   结构：.card（透明定位容器）
+         └ .cardShape（圆角梯形背景，skewX + border-radius）
+           └ .cardBg（径向光效）
+         └ .cardContent（文字内容，反向 skew 矫正）
+         └ .cardLabel（英文标签）
+   ============================================ */
+.card {
+  position: absolute;
+  cursor: pointer;
+  background: transparent;
+  /* 所有可动画属性的过渡 */
+  transition:
+    width 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    top 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    left 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    right 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    bottom 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 圆角梯形背景层 — skewX + border-radius 实现真正圆润的圆角梯形 */
+.cardShape {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  transition:
+    transform 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    border-radius 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 卡片背景光效层 */
+.cardBg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cardActive .cardBg {
+  transform: scale(1.04);
+}
+
+/* ============================================
+   左卡片 — 梯形：左边垂直，右边斜切
+   激活态：大且高，靠左上
+   非激活态：小且矮，靠左偏下
+
+   使用内部 .cardShape 层实现圆角梯形：
+   卡片本身透明定位，.cardShape 带 border-radius
+   + skewX 倾斜 + overflow:hidden 裁切内容
+   ============================================ */
+.cardLeft {
+  /* 默认态（左卡片激活）：大卡片 */
+  top: 0;
+  left: 0;
+  width: 62%;
+  height: 100%;
+  background: transparent;
+}
+
+.cardLeft .cardShape {
+  background: linear-gradient(
+    150deg,
+    #d8d0c5 0%,
+    #c9bfb2 40%,
+    #bfb4a5 100%
+  );
+  border-radius: 16px;
+  transform: skewX(-5deg);
+  transform-origin: bottom left;
+}
+
+.cardLeft .cardBg {
+  background:
+    radial-gradient(
+      ellipse 80% 60% at 70% 30%,
+      rgba(255, 255, 255, 0.08) 0%,
+      transparent 70%
+    );
+}
+
+/* 左卡片 — 非激活态（右卡片被 hover） */
+.cardLeft.cardInactive {
+  top: 15%;
+  left: 0;
+  width: 50%;
+  height: 85%;
+}
+
+.cardLeft.cardInactive .cardShape {
+  transform: skewX(-4deg);
+}
+
+/* ============================================
+   右卡片 — 梯形：左边斜切，右边垂直
+   默认态（非激活）：小且矮，靠右下
+   激活态：大且高，靠右上
+   ============================================ */
+.cardRight {
+  /* 默认态（右卡片非激活）：小卡片
+     用 top: 22% 代替 bottom: 0，避免 bottom→auto 跳变无法过渡 */
+  top: 22%;
+  right: 0;
+  width: 44%;
+  height: 78%;
+  background: transparent;
+}
+
+.cardRight .cardShape {
+  background: linear-gradient(
+    150deg,
+    #e8e2da 0%,
+    #ddd6cc 40%,
+    #d5cdc3 100%
+  );
+  border-radius: 16px;
+  transform: skewX(-5deg);
+  transform-origin: bottom right;
+}
+
+.cardRight .cardBg {
+  background:
+    radial-gradient(
+      ellipse 80% 60% at 70% 30%,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 70%
+    );
+}
+
+/* 右卡片 — 激活态 */
+.cardRight.cardActive {
+  top: 0;
+  right: 0;
+  width: 56%;
+  height: 100%;
+}
+
+.cardRight.cardActive .cardShape {
+  transform: skewX(-5deg);
+}
+
+/* ============================================
+   卡片内容 — 左下角对齐，反向 skew 矫正文字水平
+   ============================================ */
+.cardContent {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1.8rem 2.2rem;
+  transition: opacity 0.5s ease;
+}
+
+.cardInactive .cardContent {
+  opacity: 0.7;
+}
+
+/* 图标 */
+.cardIcon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 0.5s ease;
+}
+
+.cardIcon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.cardActive .cardIcon {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* 产品名称 */
+.cardName {
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #fff;
+  margin-bottom: 0.6rem;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 描述文本 */
+.cardDesc {
+  font-size: clamp(0.7rem, 0.85vw, 0.82rem);
+  font-weight: 400;
+  line-height: 1.8;
+  letter-spacing: 0.03em;
+  color: rgba(255, 255, 255, 0.65);
+  max-width: 340px;
+  /* 默认隐藏，hover 时展示 */
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition:
+    opacity 0.5s ease 0.1s,
+    max-height 0.5s ease;
+}
+
+.cardActive .cardDesc {
+  opacity: 1;
+  max-height: 120px;
+}
+
+/* 英文标签 — 右上角 */
+.cardLabel {
+  position: absolute;
+  top: 1.6rem;
+  right: 2rem;
+  z-index: 2;
+  font-size: clamp(0.5rem, 0.7vw, 0.62rem);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+  transition: color 0.5s ease;
+}
+
+.cardActive .cardLabel {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* ============================================
+   卡片 hover 微光效果 — 作用在 .cardShape 上
+   ============================================ */
+.cardShape::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    transparent 50%
+  );
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.cardActive .cardShape::after {
+  opacity: 1;
+}
+
+/* 卡片内边框高光 — 作用在 .cardShape 上 */
+.cardShape::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+  transition: box-shadow 0.5s ease;
+}
+
+.cardActive .cardShape::before {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+/* ============================================
+   合作伙伴区域
+   ============================================ */
+.partnerArea {
+  width: 100%;
+  max-width: 1100px;
+  margin-top: 1.5rem;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* 入场动画 */
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 1s ease-out 0.65s,
+    transform 1s ease-out 0.65s;
+}
+
+.partnerAreaVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 分隔线 — 合作伙伴与产品之间 */
+.partnerDivider {
+  width: 60px;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+}
+
+/* 合作伙伴小标签 */
+.partnerTag {
+  font-size: clamp(0.55rem, 0.75vw, 0.65rem);
+  font-weight: 500;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.3);
+  margin-bottom: 0.8rem;
+}
+
+/* 合作伙伴大标题 */
+.partnerTitle {
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+  text-align: center;
+  color: #1a1a1a;
+  margin: 0 0 0.4rem;
+}
+
+/* 合作伙伴英文副标题 */
+.partnerSubtitle {
+  font-size: clamp(0.5rem, 0.75vw, 0.65rem);
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.25);
+  margin-bottom: 0.8rem;
+}
+
+/* 合作伙伴 Logo 链接 */
+.partnerLink {
+  display: inline-block;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.partnerLink:hover {
+  opacity: 0.7;
+  transform: translateY(-2px);
+}
+
+.partnerLogoImg {
+  height: 80px;
+  width: auto;
+  display: block;
+}
+
+/* ============================================
+   响应式适配
+   ============================================ */
+@media (max-width: 768px) {
+  .section {
+    padding: 2.5rem 1.5rem 2rem;
+  }
+
+  .header {
+    margin-bottom: 1.5rem;
+  }
+
+  .title {
+    letter-spacing: 0.03em;
+  }
+
+  /* 移动端改为纵向堆叠 */
+  .cardContainer {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    flex: 1;
+    gap: 0.6rem;
+  }
+
+  .card {
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 140px;
+    flex: 1;
+  }
+
+  /* 移动端取消梯形倾斜 */
+  .cardLeft .cardShape,
+  .cardRight .cardShape {
+    transform: skewX(0deg) !important;
+    border-radius: 12px;
+  }
+
+  .cardLeft,
+  .cardRight {
+    background: transparent;
+  }
+
+  .cardContent {
+    padding: 1.3rem 1.5rem;
+  }
+
+  .cardName {
+    font-size: clamp(1rem, 4vw, 1.3rem);
+  }
+
+  .cardDesc {
+    max-width: 100%;
+    opacity: 1;
+    max-height: 120px;
+  }
+
+  .cardLabel {
+    top: 1rem;
+    right: 1.2rem;
+  }
+
+  .partnerArea {
+    margin-top: 1.5rem;
+  }
+
+  .partnerLogoImg {
+    height: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    padding: 2rem 1.2rem 1.5rem;
+  }
+
+  .header {
+    margin-bottom: 1rem;
+  }
+
+  .cardContent {
+    padding: 1rem 1.2rem;
+  }
+
+  .cardIcon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 0.6rem;
+  }
+
+  .partnerLogoImg {
+    height: 50px;
+  }
+}

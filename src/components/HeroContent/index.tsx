@@ -14,9 +14,9 @@ interface HeroContentProps {
  * 首页前景内容组件
  *
  * 包含：
- * - 顶部标签（Sanctuary in the Sky）
- * - 主标题（出雲資本）
- * - 副标题（AscenCloud Investment）
+ * - 主标题（出雲资本）
+ * - 中文副标题（拨云见日 洞见未来）
+ * - 英文副标题（AscenCloud Investment）
  * - 进入按钮
  *
  * 所有文字元素带入场动画（fadeIn / fadeInUp），
@@ -31,8 +31,8 @@ const HeroContent = ({ hidden, onEnter }: HeroContentProps) => {
 
   return (
     <div className={`${styles.content} ${hidden ? styles.contentHidden : ''}`}>
-      <div className={styles.tag}>Sanctuary in the Sky</div>
-      <div className={styles.title}>出雲資本</div>
+      <div className={styles.title}>出雲资本</div>
+      <div className={styles.slogan}>拨云见日 洞见未来</div>
       <div className={styles.subtitle}>AscenCloud Investment</div>
       <button
         className={styles.enterBtn}

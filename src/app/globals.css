@@ -9,7 +9,9 @@
   --vh: 1vh;
 }
 
-* {
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -18,6 +20,7 @@
 html,
 body {
   width: 100%;
+  max-width: 100%;
   min-height: 100%;
   background: #0a0a0a;
   font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -32,6 +35,9 @@ body {
 }
 
 html {
+  /* iOS Safari: 强制限制根元素不超出视口宽度 */
+  overflow: hidden;
+  overflow-y: auto;
   /* 翻页动画由 JS requestAnimationFrame 驱动，不使用 CSS scroll-behavior */
 }
 

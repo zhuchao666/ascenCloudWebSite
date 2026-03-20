@@ -4,11 +4,7 @@
 
 .formWrapper {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  /* 使用 100% 而非 100vh，iOS 键盘弹起时 100vh 不会变化但 100% 跟随 layout viewport */
-  height: 100%;
+  inset: 0;
   z-index: 10;
   display: flex;
   align-items: center;

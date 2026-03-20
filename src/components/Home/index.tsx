@@ -22,11 +22,22 @@ const TRANSITION_DURATION = 800;
 /** 翻页动画后的冷却时间（ms），防止连续触发 */
 const COOLDOWN = TRANSITION_DURATION + 200;
 
-// 首屏固定层容器样式 — GPU 合成层
-const heroWrapperStyle: React.CSSProperties = {
-  willChange: 'opacity',
-  backfaceVisibility: 'hidden',
-};
+/**
+ * 注意：首屏固定层容器**不能**设置以下任何属性：
+ * - willChange（包括 'opacity', 'transform' 等）
+ * - backfaceVisibility: 'hidden'
+ * - transform（任何非 none 值）
+ * - filter / backdrop-filter
+ * - contain: paint / contain: layout
+ *
+ * 因为这些属性都会创建新的"包含块"(containing block)，导致内部
+ * position: fixed 子元素不再相对视口定位，而是相对该容器定位。
+ * iOS Safari 严格遵循此规范，Chrome 在部分情况下表现更宽容，
+ * 这就是导致两浏览器布局不一致的根本原因。
+ *
+ * JS 通过 ref 直接操作 opacity 是安全的 —— opacity 本身只创建层叠上下文，
+ * 不创建新的包含块。
+ */
 
 /**
  * 首页主体组件 — 出雲资本 Landing Page
@@ -94,8 +105,8 @@ const Home = () => {
     document.body.style.position = 'fixed';
     document.body.style.top = '0';
     document.body.style.left = '0';
-    document.body.style.width = '100%';
-    document.body.style.height = '100%';
+    document.body.style.right = '0';
+    document.body.style.bottom = '0';
     // 确保停留在首页
     window.scrollTo(0, 0);
     // 第二步：延迟 100ms 后显示表单，确保标题已消失再淡入
@@ -116,8 +127,8 @@ const Home = () => {
     document.body.style.position = '';
     document.body.style.top = '';
     document.body.style.left = '';
-    document.body.style.width = '';
-    document.body.style.height = '';
+    document.body.style.right = '';
+    document.body.style.bottom = '';
     // 恢复滚动位置
     window.scrollTo(0, 0);
   }, []);
@@ -328,16 +339,13 @@ const Home = () => {
       {/* Loading 遮罩 */}
       <LoadingScreen loaded={videoLoaded} />
 
-      {/* 首屏固定层容器 — 随翻页淡出，GPU 合成层 */}
-      <div ref={heroWrapperRef} style={heroWrapperStyle}>
+      {/* 首屏固定层容器 — 随翻页淡出（JS 操控 opacity） */}
+      <div ref={heroWrapperRef}>
         {/* 视频背景兜底色 — 防止视频 loop 重置时瞬间闪烁黑色 */}
         <div
           style={{
             position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
+            inset: 0,
             background: '#2c3e50',
             zIndex: 0,
             pointerEvents: 'none',
@@ -354,8 +362,7 @@ const Home = () => {
           onCanPlayThrough={handleVideoLoaded}
           style={{
             position: 'fixed',
-            top: 0,
-            left: 0,
+            inset: 0,
             width: '100%',
             height: '100%',
             objectFit: 'cover',
@@ -370,10 +377,7 @@ const Home = () => {
         <div
           style={{
             position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
+            inset: 0,
             zIndex: 1,
             pointerEvents: 'none',
             background: `linear-gradient(

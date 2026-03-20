@@ -525,7 +525,7 @@
     flex-direction: column;
     height: auto;
     flex: 1;
-    gap: 0.6rem;
+    gap: 0.5rem;
   }
 
   .card {
@@ -536,8 +536,8 @@
     right: auto !important;
     width: 100% !important;
     height: auto !important;
-    min-height: 140px;
-    max-height: 220px;
+    min-height: 100px;
+    max-height: 180px;
     flex: 1;
   }
 
@@ -601,6 +601,15 @@
 
   .header {
     margin-bottom: 1rem;
+  }
+
+  .cardContainer {
+    gap: 0.4rem;
+  }
+
+  .card {
+    min-height: 90px;
+    max-height: 160px;
   }
 
   .cardContent {

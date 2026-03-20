@@ -368,6 +368,8 @@ const Home = () => {
             objectFit: 'cover',
             zIndex: 0,
             pointerEvents: 'none',
+            // 略微放大，遮盖视频源上下边沿的黑线
+            transform: 'scale(1.02)',
           }}
         >
           <source src="/bg.mp4" type="video/mp4" />

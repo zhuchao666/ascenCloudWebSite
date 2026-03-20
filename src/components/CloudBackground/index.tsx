@@ -122,11 +122,10 @@ const CloudBackground = ({ onTextureLoaded, paused = false }: CloudBackgroundPro
     uniformsRef.current = uniforms;
 
     // ============================================
-    // 加载背景纹理（basePath 适配 GitHub Pages）
+    // 加载背景纹理
     // ============================================
-    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
     const textureLoader = new TextureLoader();
-    const texture = textureLoader.load(`${basePath}/bg.png`, (tex) => {
+    const texture = textureLoader.load('/bg.png', (tex) => {
       uniforms.uImgAspect.value = tex.image.width / tex.image.height;
       onTextureLoadedRef.current?.();
     });

@@ -4,6 +4,11 @@
 
 /* 字体使用 next/font 在 layout.tsx 中通过 CSS 变量注入，不再使用 @import */
 
+:root {
+  /* JS 会实时更新此值为 window.innerHeight，避免 iOS 工具栏导致的抖动 */
+  --vh: 1vh;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -20,13 +25,17 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
+  /* 禁用浏览器默认触摸手势滚动，由 JS 完全接管翻页 */
+  touch-action: none;
 }
 
 html {
-  scroll-behavior: smooth;
+  /* 翻页动画由 JS requestAnimationFrame 驱动，不使用 CSS scroll-behavior */
 }
 
-/* 自定义滚动条 — 与深色主题一致 */
+/* 自定义滚动条 — PC 端与深色主题一致 */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -42,4 +51,18 @@ html {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.25);
+}
+
+/* 移动端隐藏滚动条 */
+@media (max-width: 768px) {
+  html,
+  body {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
 }

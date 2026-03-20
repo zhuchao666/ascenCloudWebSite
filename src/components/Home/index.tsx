@@ -1,30 +1,11 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import dynamic from 'next/dynamic';
 import HeroContent from '@/components/HeroContent';
 import LoadingScreen from '@/components/LoadingScreen';
 import LoginForm from '@/components/LoginForm';
 import AboutSection from '@/components/AboutSection';
 import ProductSection from '@/components/ProductSection';
-
-/**
- * 重组件动态导入 — 遵循 bundle-dynamic-imports 规则
- */
-const CloudBackground = dynamic(
-  () => import('@/components/CloudBackground'),
-  { ssr: false },
-);
-
-const CloudOverlay = dynamic(
-  () => import('@/components/CloudOverlay'),
-  { ssr: false },
-);
-
-const BottomFog = dynamic(
-  () => import('@/components/BottomFog'),
-  { ssr: false },
-);
 
 /** 页面总数 */
 const TOTAL_PAGES = 3;
@@ -33,7 +14,7 @@ const TOTAL_PAGES = 3;
 const WHEEL_THRESHOLD = 80;
 
 /** 触摸滑动触发翻页的阈值（像素） */
-const TOUCH_THRESHOLD = 60;
+const TOUCH_THRESHOLD = 40;
 
 /** 翻页动画持续时间（ms） */
 const TRANSITION_DURATION = 800;
@@ -54,13 +35,17 @@ const heroWrapperStyle: React.CSSProperties = {
  * - 监听 wheel / touch 手势，累计滚动量达到阈值后自动翻页
  * - 使用 CSS scroll-snap 作为目标锚点，scrollTo smooth 驱动动画
  * - 翻页动画期间 + 冷却期锁定输入，防止连续触发
- * - 首屏淡出后暂停 Three.js / Canvas 2D 节省 GPU
+ * - 首屏淡出后暂停视频节省资源
  */
 const Home = () => {
-  const [textureLoaded, setTextureLoaded] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  /** 控制 HeroContent 标题是否隐藏 */
+  const [hideHero, setHideHero] = useState(false);
+  /** 控制 LoginForm 是否可见（延迟于 hideHero） */
   const [showLogin, setShowLogin] = useState(false);
-  const [heroPaused, setHeroPaused] = useState(false);
   const heroWrapperRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const showLoginRef = useRef(false);
 
   // 翻页状态 refs（不触发重渲染）
   const currentPageRef = useRef(0);
@@ -69,47 +54,141 @@ const Home = () => {
   const wheelTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchStartYRef = useRef(0);
 
-  /** 背景纹理加载完成回调 */
-  const handleTextureLoaded = useCallback(() => {
-    setTextureLoaded(true);
+  /**
+   * 设置 CSS 变量 --vh，解决 iOS Safari/微信底部工具栏导致 100vh 抖动的问题
+   * 只在初始化和横竖屏切换时更新，不监听普通 resize（工具栏收起会触发 resize）
+   */
+  useEffect(() => {
+    const setVh = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+
+    setVh();
+
+    // 仅监听 orientationchange（横竖屏切换），不监听 resize
+    window.addEventListener('orientationchange', () => {
+      // 延迟一帧等 iOS 完成旋转
+      setTimeout(setVh, 100);
+    });
+
+    return () => {
+      window.removeEventListener('orientationchange', setVh);
+    };
   }, []);
 
-  /** 点击"立即开始" — 切换到登录表单 */
+  /** 背景视频可播放回调 */
+  const handleVideoLoaded = useCallback(() => {
+    setVideoLoaded(true);
+  }, []);
+
+  /** 点击"立即开始" — 先隐藏标题，再淡入登录表单 */
   const handleEnter = useCallback(() => {
-    setShowLogin(true);
+    // 第一步：立即隐藏标题
+    setHideHero(true);
+    showLoginRef.current = true;
+    // 锁定 body 滚动，防止 iOS 键盘弹起时页面被推动
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    // 锁定 body 位置，防止 iOS Safari 键盘弹起导致的 fixed 元素偏移
+    document.body.style.position = 'fixed';
+    document.body.style.top = '0';
+    document.body.style.left = '0';
+    document.body.style.width = '100%';
+    document.body.style.height = '100%';
+    // 确保停留在首页
+    window.scrollTo(0, 0);
+    // 第二步：延迟 100ms 后显示表单，确保标题已消失再淡入
+    setTimeout(() => {
+      setShowLogin(true);
+    }, 100);
   }, []);
 
-  /** 关闭登录弹窗 — 返回主页内容 */
+  /** 关闭登录弹窗 — 弹窗直接消失，同时标题淡入 */
   const handleCloseLogin = useCallback(() => {
     setShowLogin(false);
+    showLoginRef.current = false;
+    // 弹窗直接消失，同时标题开始淡入
+    setHideHero(false);
+    // 恢复 body 定位和滚动
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.width = '';
+    document.body.style.height = '';
+    // 恢复滚动位置
+    window.scrollTo(0, 0);
+  }, []);
+
+  /**
+   * 获取每页的实际高度（即 --vh * 100）
+   * 与 CSS calc(var(--vh, 1vh) * 100) 保持完全一致，
+   * 避免 iOS Safari 地址栏收起/展开导致 innerHeight 与 section 实际高度不匹配
+   */
+  const getPageHeight = useCallback(() => {
+    const vhStr = getComputedStyle(document.documentElement).getPropertyValue('--vh').trim();
+    const vhPx = parseFloat(vhStr);
+    // --vh 是 innerHeight * 0.01，所以 --vh * 100 = 当时的 innerHeight
+    // 如果 --vh 还没被设置或解析失败，则退回 innerHeight
+    return vhPx > 0 ? vhPx * 100 : window.innerHeight;
   }, []);
 
   /**
    * 跳转到指定页
-   * 直接操作 DOM + scrollTo，不经过 React re-render 驱动动画
+   * 使用 requestAnimationFrame 手动实现平滑滚动，
+   * 兼容 iOS Safari/微信浏览器（不依赖 scrollTo smooth）
    */
   const goToPage = useCallback((page: number) => {
     const target = Math.max(0, Math.min(page, TOTAL_PAGES - 1));
-    if (target === currentPageRef.current) return;
     if (isAnimatingRef.current) return;
+
+    // 已在目标页 — 不翻页，但检查 scrollY 是否对齐（修正可能的微小偏移）
+    if (target === currentPageRef.current) {
+      const expectedScroll = target * getPageHeight();
+      if (Math.abs(window.scrollY - expectedScroll) > 1) {
+        window.scrollTo(0, expectedScroll);
+      }
+      return;
+    }
 
     isAnimatingRef.current = true;
     currentPageRef.current = target;
 
-    // 计算目标滚动位置（每页 100vh）
-    const scrollTarget = target * window.innerHeight;
+    const pageHeight = getPageHeight();
+    const scrollTarget = target * pageHeight;
+    const startY = window.scrollY;
+    const diff = scrollTarget - startY;
+    const startTime = performance.now();
 
-    window.scrollTo({
-      top: scrollTarget,
-      behavior: 'smooth',
-    });
+    // easeInOutCubic 缓动
+    const ease = (t: number) => {
+      return t < 0.5
+        ? 4 * t * t * t
+        : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    };
+
+    const step = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / TRANSITION_DURATION, 1);
+      const eased = ease(progress);
+
+      window.scrollTo(0, startY + diff * eased);
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      }
+    };
+
+    requestAnimationFrame(step);
 
     // 冷却结束后解锁
     setTimeout(() => {
       isAnimatingRef.current = false;
       wheelAccRef.current = 0;
     }, COOLDOWN);
-  }, []);
+  }, [getPageHeight]);
 
   /**
    * 滚动位置监听 — 首屏固定层淡出 + 暂停动画
@@ -122,9 +201,16 @@ const Home = () => {
 
     const syncHeroOpacity = () => {
       const scrollY = window.scrollY;
-      const vh = window.innerHeight;
-      // 在 0~100vh 之间线性淡出
-      const progress = Math.min(scrollY / vh, 1);
+
+      // 登录弹窗可见时强制锁定在首页，防止 iOS 键盘弹起顶起页面
+      if (showLoginRef.current && scrollY > 0) {
+        window.scrollTo(0, 0);
+        return;
+      }
+
+      const pageHeight = getPageHeight();
+      // 在 0~pageHeight 之间线性淡出
+      const progress = Math.min(scrollY / pageHeight, 1);
       const opacity = 1 - progress;
       const shouldPause = opacity <= 0.01;
 
@@ -140,7 +226,14 @@ const Home = () => {
 
       if (shouldPause !== wasPaused) {
         wasPaused = shouldPause;
-        setHeroPaused(shouldPause);
+        // 翻页离开首屏时暂停视频，返回首屏时恢复播放
+        if (videoRef.current) {
+          if (shouldPause) {
+            videoRef.current.pause();
+          } else {
+            videoRef.current.play().catch(() => {});
+          }
+        }
       }
     };
 
@@ -150,19 +243,19 @@ const Home = () => {
     return () => {
       window.removeEventListener('scroll', syncHeroOpacity);
     };
-  }, []);
+  }, [getPageHeight]);
 
   /**
-   * 手势翻页 — wheel + touch
+   * 手势翻页 — PC 端 wheel + 移动端 touch
    *
    * wheel: 累计 deltaY，超过阈值则翻页；长时间无输入自动重置累计量
-   * touch: touchstart 记录起始 Y，touchend 计算位移方向
+   * touch: touchstart 记录起始 Y，touchmove 实时判断翻页并阻止原生滚动（无滚动条）
    */
   useEffect(() => {
-    // ---- wheel 事件 ----
+    // ---- wheel 事件（PC） ----
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
-      if (isAnimatingRef.current) return;
+      if (isAnimatingRef.current || showLoginRef.current) return;
 
       wheelAccRef.current += e.deltaY;
 
@@ -175,27 +268,32 @@ const Home = () => {
       }, 200);
 
       if (wheelAccRef.current > WHEEL_THRESHOLD) {
-        // 向下翻页
         goToPage(currentPageRef.current + 1);
       } else if (wheelAccRef.current < -WHEEL_THRESHOLD) {
-        // 向上翻页
         goToPage(currentPageRef.current - 1);
       }
     };
 
-    // ---- touch 事件 ----
+    // ---- touch 事件（移动端） ----
     const handleTouchStart = (e: TouchEvent) => {
       touchStartYRef.current = e.touches[0].clientY;
     };
 
-    const handleTouchEnd = (e: TouchEvent) => {
-      if (isAnimatingRef.current) return;
+    const handleTouchMove = (e: TouchEvent) => {
+      // 阻止原生触摸滚动 — 双重保险（CSS touch-action: none 已在浏览器层面禁用）
+      e.preventDefault();
 
-      const deltaY = touchStartYRef.current - e.changedTouches[0].clientY;
+      if (isAnimatingRef.current || showLoginRef.current) return;
+
+      const deltaY = touchStartYRef.current - e.touches[0].clientY;
 
       if (deltaY > TOUCH_THRESHOLD) {
+        // 向上滑 → 下一页
+        touchStartYRef.current = e.touches[0].clientY;
         goToPage(currentPageRef.current + 1);
       } else if (deltaY < -TOUCH_THRESHOLD) {
+        // 向下滑 → 上一页
+        touchStartYRef.current = e.touches[0].clientY;
         goToPage(currentPageRef.current - 1);
       }
     };
@@ -203,12 +301,13 @@ const Home = () => {
     // wheel 需要 { passive: false } 才能 preventDefault
     window.addEventListener('wheel', handleWheel, { passive: false });
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
-    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+    // touchmove 必须 { passive: false } 才能 preventDefault 阻止原生滚动
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
 
     return () => {
       window.removeEventListener('wheel', handleWheel);
       window.removeEventListener('touchstart', handleTouchStart);
-      window.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener('touchmove', handleTouchMove);
       if (wheelTimerRef.current) {
         clearTimeout(wheelTimerRef.current);
       }
@@ -219,36 +318,83 @@ const Home = () => {
    * 页面刷新 / 初始化 — 根据当前 scrollY 同步 currentPageRef
    */
   useEffect(() => {
-    const vh = window.innerHeight;
-    const page = Math.round(window.scrollY / vh);
+    const pageHeight = getPageHeight();
+    const page = Math.round(window.scrollY / pageHeight);
     currentPageRef.current = Math.min(page, TOTAL_PAGES - 1);
-  }, []);
+  }, [getPageHeight]);
 
   return (
     <>
       {/* Loading 遮罩 */}
-      <LoadingScreen loaded={textureLoaded} />
+      <LoadingScreen loaded={videoLoaded} />
 
       {/* 首屏固定层容器 — 随翻页淡出，GPU 合成层 */}
       <div ref={heroWrapperRef} style={heroWrapperStyle}>
-        {/* Three.js 云层涌动背景（fixed，翻页后暂停） */}
-        <CloudBackground onTextureLoaded={handleTextureLoaded} paused={heroPaused} />
+        {/* 视频背景兜底色 — 防止视频 loop 重置时瞬间闪烁黑色 */}
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: '#2c3e50',
+            zIndex: 0,
+            pointerEvents: 'none',
+          }}
+        />
 
-        {/* 深色叠加渐变（fixed） */}
-        <CloudOverlay />
+        {/* MP4 视频背景（fixed，循环播放，翻页后暂停） */}
+        <video
+          ref={videoRef}
+          autoPlay
+          loop
+          muted
+          playsInline
+          onCanPlayThrough={handleVideoLoaded}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            zIndex: 0,
+            pointerEvents: 'none',
+          }}
+        >
+          <source src="/bg.mp4" type="video/mp4" />
+        </video>
 
-        {/* 底部云雾粒子（fixed，翻页后暂停） */}
-        <BottomFog paused={heroPaused} />
+        {/* 深色叠加渐变 — 增强文字可读性 */}
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: 1,
+            pointerEvents: 'none',
+            background: `linear-gradient(
+              180deg,
+              rgba(0, 0, 0, 0.45) 0%,
+              rgba(0, 0, 0, 0.2) 40%,
+              rgba(0, 0, 0, 0.15) 60%,
+              rgba(0, 0, 0, 0.5) 100%
+            )`,
+          }}
+        />
 
-        {/* 前景内容 — 点击按钮后淡出（fixed） */}
-        <HeroContent hidden={showLogin} onEnter={handleEnter} />
+        {/* 前景内容 — 点击按钮后直接消失（fixed） */}
+        <HeroContent hidden={hideHero} onEnter={handleEnter} />
 
         {/* 登录表单 — 标题淡出后入场（fixed） */}
         <LoginForm visible={showLogin} onClose={handleCloseLogin} />
       </div>
 
-      {/* 第一页占位 — 100vh（首屏内容由 fixed 层渲染） */}
-      <div style={{ height: '100vh', pointerEvents: 'none' }} />
+      {/* 第一页占位（首屏内容由 fixed 层渲染） */}
+      <div style={{ height: 'calc(var(--vh, 1vh) * 100)', pointerEvents: 'none' }} />
 
       {/* 第二页 — 关于我们模块 */}
       <AboutSection />

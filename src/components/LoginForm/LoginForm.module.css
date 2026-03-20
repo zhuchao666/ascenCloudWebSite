@@ -7,33 +7,31 @@
   top: 0;
   left: 0;
   width: 100%;
+  /* 使用 100% 而非 100vh，iOS 键盘弹起时 100vh 不会变化但 100% 跟随 layout viewport */
   height: 100%;
   z-index: 10;
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  /* 初始隐藏态 */
-  opacity: 0;
-  transform: translateY(30px) scale(0.96);
-  transition:
-    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-    visibility 0s linear 0.8s;
+  /* 初始隐藏态 — 表单在视口下方，无过渡（关闭时直接消失） */
+  transform: translateY(100%);
   /* 隐藏态不可见 — 避免 backdrop-filter 穿透影响背景 */
   visibility: hidden;
+  /* 防止 iOS 键盘弹起时容器内部滚动 */
+  overflow: hidden;
+  /* 阻止 iOS 橡皮筋效果和触摸滚动 */
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
+  touch-action: none;
 }
 
-/* 可见态 — 入场动画 */
+/* 可见态 — 从底部滑入 */
 .formVisible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translateY(0);
   pointer-events: auto;
   visibility: visible;
-  transition:
-    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-    visibility 0s linear 0s;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* 表单容器 — 毛玻璃卡片 */
@@ -101,10 +99,10 @@
 
 /* 表单副标题 */
 .formSubtitle {
-  font-size: clamp(0.7rem, 1vw, 0.85rem);
+  font-size: clamp(0.85rem, 1.2vw, 1rem);
   font-weight: 400;
   letter-spacing: 0.2em;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.7);
   margin-bottom: 2.5rem;
 }
 
@@ -117,11 +115,11 @@
 /* 标签 */
 .label {
   display: block;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.7);
   margin-bottom: 0.5rem;
 }
 
@@ -130,10 +128,10 @@
   width: 100%;
   padding: 0.85rem 1rem;
   font-family: inherit;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 400;
   letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.95);
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
@@ -145,7 +143,7 @@
 }
 
 .input::placeholder {
-  color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.4);
   letter-spacing: 0.06em;
 }
 
@@ -161,12 +159,12 @@
   margin-top: 0.8rem;
   padding: 0.9rem 0;
   font-family: inherit;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 600;
   letter-spacing: 0.3em;
-  color: rgba(255, 255, 255, 0.85);
-  border: 1.5px solid rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.95);
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   cursor: pointer;
   pointer-events: auto;
@@ -198,6 +196,13 @@
    响应式适配
    ============================================ */
 @media (max-width: 768px) {
+  .formWrapper {
+    /* 移动端改为顶部对齐，表单始终贴近顶部，键盘弹起不会顶出视口 */
+    align-items: flex-start;
+    padding-top: 12vh;
+    padding-top: calc(var(--vh, 1vh) * 12);
+  }
+
   .form {
     max-width: 320px;
     padding: 2.5rem 2rem;

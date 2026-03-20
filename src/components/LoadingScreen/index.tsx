@@ -28,33 +28,36 @@ const LoadingScreen = ({ loaded }: LoadingScreenProps) => {
    */
   const handleComplete = useCallback(() => {
     setFading(true);
-    // 与 CSS transition 时长 1.5s 匹配
+    // 与 CSS transition 时长 0.4s 匹配
     setTimeout(() => {
       setRemoved(true);
-    }, 1600);
+    }, 450);
   }, []);
 
   useEffect(() => {
+    const startTime = Date.now();
+    /** 进度条走满时长（ms） */
+    const FILL_DURATION = 600;
+
     const interval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+
+      // 如果资源已加载完，立即跳到 100%；否则在 FILL_DURATION 内匀速走完
       if (loaded) {
         progressRef.current = 100;
       } else {
-        // 模拟加载：非线性递增，越接近 100 越慢
-        progressRef.current += (100 - progressRef.current) * 0.03;
+        progressRef.current = Math.min((elapsed / FILL_DURATION) * 100, 100);
       }
 
       if (fillRef.current) {
-        fillRef.current.style.width = `${Math.min(progressRef.current, 100)}%`;
+        fillRef.current.style.width = `${progressRef.current}%`;
       }
 
-      if (progressRef.current >= 99.5 && loaded) {
+      if (progressRef.current >= 100) {
         clearInterval(interval);
-        if (fillRef.current) {
-          fillRef.current.style.width = '100%';
-        }
         handleComplete();
       }
-    }, 50);
+    }, 30);
 
     return () => {
       clearInterval(interval);

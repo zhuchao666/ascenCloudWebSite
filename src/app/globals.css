@@ -59,6 +59,18 @@ html {
   background: rgba(255, 255, 255, 0.25);
 }
 
+/* 隐藏滚动条（首页等全屏翻页页面使用） */
+html.hide-scrollbar,
+html.hide-scrollbar body {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+html.hide-scrollbar::-webkit-scrollbar,
+html.hide-scrollbar body::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
 /* 移动端隐藏滚动条 */
 @media (max-width: 768px) {
   html,

@@ -66,6 +66,16 @@ const Home = () => {
   const touchStartYRef = useRef(0);
 
   /**
+   * 首页隐藏滚动条 — 翻页由手势接管，不需要原生滚动条
+   */
+  useEffect(() => {
+    document.documentElement.classList.add('hide-scrollbar');
+    return () => {
+      document.documentElement.classList.remove('hide-scrollbar');
+    };
+  }, []);
+
+  /**
    * 设置 CSS 变量 --vh，解决 iOS Safari/微信底部工具栏导致 100vh 抖动的问题
    * 只在初始化和横竖屏切换时更新，不监听普通 resize（工具栏收起会触发 resize）
    */
@@ -341,14 +351,19 @@ const Home = () => {
 
       {/* 首屏固定层容器 — 随翻页淡出（JS 操控 opacity） */}
       <div ref={heroWrapperRef}>
-        {/* 视频背景兜底色 — 防止视频 loop 重置时瞬间闪烁黑色 */}
+        {/* 兜底背景图 — 视频未加载完成时展示，加载完成后淡出 */}
         <div
           style={{
             position: 'fixed',
             inset: 0,
-            background: '#2c3e50',
+            backgroundImage: 'url(/bg.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
             zIndex: 0,
             pointerEvents: 'none',
+            opacity: videoLoaded ? 0 : 1,
+            transition: 'opacity 0.6s ease',
           }}
         />
 
@@ -370,6 +385,8 @@ const Home = () => {
             pointerEvents: 'none',
             // 略微放大，遮盖视频源上下边沿的黑线
             transform: 'scale(1.02)',
+            opacity: videoLoaded ? 1 : 0,
+            transition: 'opacity 0.6s ease',
           }}
         >
           <source src="/bg.mp4" type="video/mp4" />

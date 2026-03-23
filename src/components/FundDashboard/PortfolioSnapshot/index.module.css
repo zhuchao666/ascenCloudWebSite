@@ -28,6 +28,12 @@
   margin-top: 2px;
 }
 
+.updateTime {
+  font-size: 11px;
+  font-weight: 400;
+  color: #9ca3af;
+}
+
 .viewAllBtn {
   font-size: 13px;
   font-weight: 500;

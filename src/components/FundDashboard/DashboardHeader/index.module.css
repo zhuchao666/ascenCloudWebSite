@@ -1,0 +1,133 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 40px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.logoText {
+  font-size: 16px;
+  font-weight: 700;
+  color: #101828;
+  letter-spacing: -0.02em;
+}
+
+/* Nav */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.navItem {
+  font-size: 14px;
+  font-weight: 500;
+  color: #6a7282;
+  text-decoration: none;
+  padding: 6px 16px;
+  border-radius: 8px;
+  transition: color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+
+.navItem:hover {
+  color: #101828;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.navItemActive {
+  color: #101828;
+  font-weight: 600;
+  background: rgba(139, 92, 246, 0.08);
+}
+
+/* User Section */
+.userSection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  cursor: pointer;
+  padding: 4px 8px 4px 4px;
+  border-radius: 10px;
+  transition: background 0.15s;
+}
+
+.userSection:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8b5cf6, #6366f1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avatarText {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.userName {
+  font-size: 13px;
+  font-weight: 500;
+  color: #101828;
+  white-space: nowrap;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .inner {
+    padding: 0 20px;
+  }
+
+  .navItem {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav {
+    display: none;
+  }
+
+  .userName {
+    display: none;
+  }
+}

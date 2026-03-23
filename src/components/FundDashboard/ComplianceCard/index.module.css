@@ -1,13 +1,13 @@
 .card {
   background: rgba(255, 255, 255, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 14px;
+  padding: 10px 14px;
   backdrop-filter: blur(12px);
   box-shadow: 0 10px 15px 0 rgba(243, 232, 255, 0.5);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 4px;
   transition: box-shadow 0.2s, transform 0.2s;
 }
 
@@ -19,21 +19,22 @@
 .header {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .iconWrap {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
   background: rgba(130, 0, 219, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .title {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #101828;
 }
@@ -48,19 +49,25 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 0;
+  padding: 5px 0;
 }
 
-.itemLeft {
+.itemInfo {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  gap: 1px;
 }
 
 .itemLabel {
   font-size: 13px;
-  font-weight: 500;
-  color: #4a5565;
+  font-weight: 600;
+  color: #101828;
+}
+
+.itemDate {
+  font-size: 11px;
+  font-weight: 400;
+  color: #9ca3af;
 }
 
 .divider {
@@ -69,56 +76,18 @@
 }
 
 .badge {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
   padding: 3px 10px;
   border-radius: 12px;
 }
 
-.badgeVerified {
+.badgeUp {
   color: #00a63e;
   background: rgba(0, 166, 62, 0.08);
 }
 
-.badgeWarning {
-  color: #f59e0b;
-  background: rgba(245, 158, 11, 0.08);
-}
-
-.progressSection {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.progressHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.progressLabel {
-  font-size: 11px;
-  font-weight: 500;
-  color: #6a7282;
-}
-
-.progressValue {
-  font-size: 11px;
-  font-weight: 600;
+.badgeDown {
   color: #8200db;
-}
-
-.progressTrack {
-  height: 6px;
   background: rgba(130, 0, 219, 0.08);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.progressBar {
-  height: 100%;
-  background: linear-gradient(90deg, #8200db, #ad46ff);
-  border-radius: 3px;
-  transition: width 0.3s ease;
 }

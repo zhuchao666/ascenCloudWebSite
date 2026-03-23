@@ -356,7 +356,7 @@ const Home = () => {
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundImage: 'url(/bg.png)',
+            backgroundImage: 'url(https://cdn.meeting.tencent.com/pro/ZDVkNzdjNjYtNWZiMy00NjU0LWE3YmEtZmYyMzliMGE5ZjFk.png)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',

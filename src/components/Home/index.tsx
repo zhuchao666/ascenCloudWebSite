@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import HeroContent from '@/components/HeroContent';
+import HeroContent from '@/components/Home/HeroContent';
 import LoadingScreen from '@/components/LoadingScreen';
-import LoginForm from '@/components/LoginForm';
-import AboutSection from '@/components/AboutSection';
-import ProductSection from '@/components/ProductSection';
+import LoginForm from '@/components/Home/LoginForm';
+import AboutSection from '@/components/Home/AboutSection';
+import ProductSection from '@/components/Home/ProductSection';
 
 /** 页面总数 */
 const TOTAL_PAGES = 3;

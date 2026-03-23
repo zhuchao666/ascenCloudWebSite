@@ -1,0 +1,137 @@
+.card {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 16px;
+  padding: 24px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 15px 0 rgba(243, 232, 255, 0.5);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #101828;
+  line-height: 1.5;
+}
+
+.subtitle {
+  font-size: 13px;
+  font-weight: 400;
+  color: #6a7282;
+  margin-top: 2px;
+}
+
+.viewAllBtn {
+  font-size: 13px;
+  font-weight: 500;
+  color: #8200db;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: opacity 0.2s;
+}
+
+.viewAllBtn:hover {
+  opacity: 0.7;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.th {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6a7282;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0 12px 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  white-space: nowrap;
+}
+
+.thRight {
+  text-align: right;
+}
+
+.tr {
+  transition: background 0.15s;
+}
+
+.tr:hover {
+  background: rgba(130, 0, 219, 0.03);
+}
+
+.td {
+  padding: 14px 12px;
+  font-size: 13px;
+  color: #4a5565;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  white-space: nowrap;
+}
+
+.tdRight {
+  text-align: right;
+}
+
+.tdBold {
+  font-weight: 600;
+  color: #101828;
+}
+
+.assetCell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.assetDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.assetSymbol {
+  font-size: 13px;
+  font-weight: 600;
+  color: #101828;
+}
+
+.assetName {
+  font-size: 11px;
+  color: #6a7282;
+  margin-top: 1px;
+}
+
+.typeBadge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.changeUp {
+  color: #00a63e;
+  font-weight: 600;
+}
+
+.changeDown {
+  color: #e7000b;
+  font-weight: 600;
+}

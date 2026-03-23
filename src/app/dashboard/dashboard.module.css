@@ -1,0 +1,13 @@
+.dashboardRoot {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(
+    145.877deg,
+    rgb(250, 245, 255) 0%,
+    rgb(239, 246, 255) 50%,
+    rgb(253, 242, 248) 100%
+  );
+  color: #101828;
+  touch-action: auto;
+  overflow: auto;
+}

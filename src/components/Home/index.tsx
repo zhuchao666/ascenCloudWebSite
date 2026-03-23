@@ -376,7 +376,8 @@ const Home = () => {
         </video>
 
         {/* 深色叠加渐变 — 增强文字可读性 */}
-        <div
+        {
+          showLogin && (<div
           style={{
             position: 'fixed',
             inset: 0,
@@ -390,7 +391,8 @@ const Home = () => {
               rgba(0, 0, 0, 0.5) 100%
             )`,
           }}
-        />
+          />)
+        }
 
         {/* 前景内容 — 点击按钮后直接消失（fixed） */}
         <HeroContent hidden={hideHero} onEnter={handleEnter} />

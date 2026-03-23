@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     default: '出雲资本',
     template: '%s | 出雲资本',
   },
-  description: 'AscenCloud Investment — Sanctuary in the Sky',
+  description: 'AscenCloud Investment',
 };
 
 export const viewport: Viewport = {

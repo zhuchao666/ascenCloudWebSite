@@ -44,15 +44,15 @@ const FundDashboard = () => {
         <ComplianceCard />
       </section>
 
+      {/* 业绩走势 */}
+      <section className={styles.incomeRow}>
+        <IncomeSummary />
+      </section>
+
       {/* Portfolio Section */}
       <section className={styles.portfolioRow}>
         <PortfolioSnapshot />
         <PortfolioAllocations />
-      </section>
-
-      {/* Income Summary */}
-      <section className={styles.incomeRow}>
-        <IncomeSummary />
       </section>
     </div>
   );

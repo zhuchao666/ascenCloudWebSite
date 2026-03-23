@@ -7,7 +7,9 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className={styles.dashboardRoot}>
       <DashboardHeader />
-      {children}
+      <div className={styles.contentArea}>
+        {children}
+      </div>
     </div>
   );
 };

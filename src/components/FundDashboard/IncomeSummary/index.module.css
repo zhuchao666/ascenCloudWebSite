@@ -14,6 +14,12 @@
   margin-bottom: 20px;
 }
 
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 .title {
   font-size: 16px;
   font-weight: 700;
@@ -28,15 +34,59 @@
   margin-top: 2px;
 }
 
-.periodTabs {
+/* Legend */
+.legend {
   display: flex;
-  gap: 4px;
+  align-items: center;
+  gap: 14px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legendDot {
+  display: inline-block;
+  width: 10px;
+  height: 3px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.legendLabel {
+  font-size: 11px;
+  color: #6a7282;
+  white-space: nowrap;
+}
+
+/* Period tabs with slider */
+.periodTabs {
+  position: relative;
+  display: flex;
+  gap: 0;
   background: rgba(0, 0, 0, 0.04);
   padding: 3px;
   border-radius: 8px;
 }
 
+.slider {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  height: calc(100% - 6px);
+  background: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 0;
+}
+
 .tab {
+  position: relative;
+  z-index: 1;
   font-size: 12px;
   font-weight: 500;
   color: #6a7282;
@@ -45,20 +95,19 @@
   background: transparent;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: color 0.2s, font-weight 0.2s;
 }
 
 .tabActive {
-  background: #ffffff;
   color: #101828;
   font-weight: 600;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .tab:hover:not(.tabActive) {
   color: #101828;
 }
 
+/* Chart */
 .chartWrap {
   position: relative;
   width: 100%;
@@ -77,17 +126,19 @@
   font-family: var(--font-inter), sans-serif;
 }
 
+/* Tooltip */
 .tooltip {
   position: absolute;
   transform: translate(-50%, -100%);
   background: #101828;
   color: #ffffff;
-  padding: 8px 12px;
-  border-radius: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
   pointer-events: none;
   white-space: nowrap;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 10;
+  min-width: 140px;
 }
 
 .tooltip::after {
@@ -104,12 +155,32 @@
 .tooltipDate {
   font-size: 11px;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 2px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 6px;
 }
 
-.tooltipValue {
-  font-size: 14px;
+.tooltipRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.tooltipDot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tooltipLabel {
+  color: rgba(255, 255, 255, 0.7);
+  flex: 1;
+}
+
+.tooltipVal {
   font-weight: 600;
   color: #ffffff;
 }

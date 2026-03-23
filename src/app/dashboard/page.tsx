@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import FundDashboard from '@/components/FundDashboard';
 
 export const metadata: Metadata = {
-  title: 'Fund Dashboard',
-  description: 'AscenCloud Fund Dashboard — Portfolio Overview',
+  title: '基金大盘',
+  description: '出云资本基金大盘',
 };
 
 const DashboardPage = () => {

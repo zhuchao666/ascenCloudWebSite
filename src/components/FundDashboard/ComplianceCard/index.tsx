@@ -9,7 +9,7 @@ const ComplianceCard = () => {
         <div className={styles.iconWrap}>
           <ChartIcon />
         </div>
-        <span className={styles.title}>收益对比</span>
+        <span className={styles.title}>近一年收益对比</span>
       </div>
 
       <div className={styles.items}>
@@ -38,14 +38,14 @@ const ComplianceCard = () => {
 const ChartIcon = () => (
   <svg width="14" height="14" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
-      d="M16.5 13.5L10.875 7.875L7.125 11.625L1.5 6"
+      d="M1.5 13.5L7.125 7.875L10.875 11.625L16.5 6"
       stroke="#8200db"
       strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
-      d="M12 13.5H16.5V9"
+      d="M12 6H16.5V10.5"
       stroke="#8200db"
       strokeWidth="1.5"
       strokeLinecap="round"

@@ -5,7 +5,8 @@ import Link from 'next/link';
 import styles from './index.module.css';
 
 const navItems = [
-  { label: 'Dashboard', href: '/dashboard' },
+  { label: '持仓大盘', href: '/dashboard' },
+  { label: '账户账本', href: '/accounts' },
 ];
 
 const DashboardHeader = () => {
@@ -17,7 +18,7 @@ const DashboardHeader = () => {
         {/* Left: Logo */}
         <Link href="/dashboard" className={styles.logo}>
           <LogoIcon />
-          <span className={styles.logoText}>AscenCloud</span>
+          <span className={styles.logoText}>出雲资本</span>
         </Link>
 
         {/* Center: Nav */}

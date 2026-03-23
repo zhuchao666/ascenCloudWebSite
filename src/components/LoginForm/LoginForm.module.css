@@ -7,8 +7,10 @@
   inset: 0;
   z-index: 10;
   display: flex;
-  align-items: center;
+  /* 表单固定在距顶部一定距离，键盘从底部弹起不影响表单位置 */
+  align-items: flex-start;
   justify-content: center;
+  padding-top: 18vh;
   pointer-events: none;
   /* 初始隐藏态 — 表单在视口下方，无过渡（关闭时直接消失） */
   transform: translateY(100%);
@@ -193,10 +195,8 @@
    ============================================ */
 @media (max-width: 768px) {
   .formWrapper {
-    /* 移动端改为顶部对齐，表单始终贴近顶部，键盘弹起不会顶出视口 */
-    align-items: flex-start;
-    padding-top: 12vh;
-    padding-top: calc(var(--vh, 1vh) * 12);
+    /* 移动端距离顶部缩小，为键盘预留更多底部空间 */
+    padding-top: 10vh;
   }
 
   .form {
@@ -210,6 +210,10 @@
 }
 
 @media (max-width: 480px) {
+  .formWrapper {
+    padding-top: 8vh;
+  }
+
   .form {
     max-width: 280px;
     padding: 2rem 1.5rem;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import styles from './LoginForm.module.css';
 
 interface LoginFormProps {
@@ -22,68 +22,14 @@ interface LoginFormProps {
  * 风格与 HeroContent 保持一致：
  * 半透明玻璃质感、白色文字、细线边框
  *
- * iOS 键盘适配：
- * - 使用 visualViewport API 监听键盘弹起/收回
- * - 实时计算 offsetTop 补偿，防止 fixed 容器被键盘顶出空白
+ * iOS 键盘适配策略：
+ * 表单固定在距离顶部安全位置（CSS padding-top），
+ * 键盘从底部弹起时不会影响表单位置，无需 JS 补偿。
  */
 const LoginForm = ({ visible, onClose }: LoginFormProps) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const wrapperRef = useRef<HTMLDivElement>(null);
-
-  /**
-   * iOS 键盘弹起补偿
-   *
-   * 原理：iOS Safari 键盘弹起时，layout viewport 高度不变但 visual viewport 会缩小，
-   * 并且 visualViewport.offsetTop > 0（页面被向上推了一段距离）。
-   * 我们通过 translateY 把容器推回正确位置，消除空白。
-   */
-  useEffect(() => {
-    const vv = window.visualViewport;
-    if (!vv) return;
-
-    const onViewportChange = () => {
-      const wrapper = wrapperRef.current;
-      if (!wrapper) return;
-
-      // offsetTop 表示 visual viewport 相对 layout viewport 的偏移
-      // 键盘弹起时 offsetTop > 0，我们需要反向补偿
-      const offsetTop = vv.offsetTop;
-      const heightDiff = window.innerHeight - vv.height;
-
-      if (heightDiff > 100) {
-        // 键盘已弹起：固定容器高度为可视区域高度，并向下偏移补偿
-        wrapper.style.height = `${vv.height}px`;
-        // 需要保持 visible 状态的 translateY(0) 基础上追加键盘补偿
-        wrapper.style.transform = visible
-          ? `translateY(${offsetTop}px)`
-          : `translateY(100%)`;
-      } else {
-        // 键盘已收回：清除内联 style，让 CSS 类接管
-        wrapper.style.height = '';
-        wrapper.style.transform = '';
-      }
-    };
-
-    vv.addEventListener('resize', onViewportChange);
-    vv.addEventListener('scroll', onViewportChange);
-
-    return () => {
-      vv.removeEventListener('resize', onViewportChange);
-      vv.removeEventListener('scroll', onViewportChange);
-    };
-  }, [visible]);
-
-  /**
-   * 输入框获焦时，阻止 iOS 自动滚动行为
-   */
-  const handleFocus = useCallback(() => {
-    // 强制锁定滚动位置
-    setTimeout(() => {
-      window.scrollTo(0, 0);
-    }, 50);
-  }, []);
 
   /** 表单提交 */
   const handleSubmit = useCallback((e: React.FormEvent) => {
@@ -100,7 +46,6 @@ const LoginForm = ({ visible, onClose }: LoginFormProps) => {
 
   return (
     <div
-      ref={wrapperRef}
       className={`${styles.formWrapper} ${visible ? styles.formVisible : ''}`}
     >
       <form className={styles.form} onSubmit={handleSubmit}>
@@ -132,7 +77,6 @@ const LoginForm = ({ visible, onClose }: LoginFormProps) => {
             placeholder="请输入用户名"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            onFocus={handleFocus}
             autoComplete="username"
           />
         </div>
@@ -149,7 +93,6 @@ const LoginForm = ({ visible, onClose }: LoginFormProps) => {
             placeholder="请输入密码"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            onFocus={handleFocus}
             autoComplete="current-password"
           />
         </div>

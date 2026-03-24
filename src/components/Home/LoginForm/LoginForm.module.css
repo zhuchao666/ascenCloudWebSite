@@ -12,8 +12,8 @@
   justify-content: center;
   padding-top: 18vh;
   pointer-events: none;
-  /* 初始隐藏态 — 表单在视口下方 */
-  transform: translateY(100%);
+  /* 初始隐藏态 — 淡出 */
+  opacity: 0;
   visibility: hidden;
   /* 半透明遮罩背景 */
   background: rgba(0, 0, 0, 0.4);
@@ -24,16 +24,16 @@
   overscroll-behavior: none;
   -webkit-overflow-scrolling: auto;
   touch-action: none;
+  transition:
+    opacity 0.35s ease,
+    visibility 0.35s ease;
 }
 
-/* 可见态 — 从底部滑入 */
+/* 可见态 — 淡入出现 */
 .formVisible {
-  transform: translateY(0);
+  opacity: 1;
   pointer-events: auto;
   visibility: visible;
-  transition:
-    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-    background 0.3s ease;
 }
 
 /* 表单容器 — 白色毛玻璃卡片 */
@@ -53,6 +53,14 @@
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.12),
     0 2px 8px rgba(0, 0, 0, 0.06);
+  /* 初始稍微缩小，配合蒙层淡入 */
+  transform: scale(0.95);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 可见时恢复正常大小 */
+.formVisible .form {
+  transform: scale(1);
 }
 
 /* 右上角关闭按钮 */
@@ -149,9 +157,9 @@
 }
 
 .input:focus {
-  border-color: #8b1a1a;
+  border-color: #b5a162;
   background: rgba(255, 255, 255, 1);
-  box-shadow: 0 0 0 3px rgba(139, 26, 26, 0.08);
+  box-shadow: 0 0 0 3px rgba(181, 161, 98, 0.1);
 }
 
 /* 登录按钮 */
@@ -165,21 +173,24 @@
   letter-spacing: 0.3em;
   color: #ffffff;
   border: none;
-  background: #8b1a1a;
+  background: #b5a162;
   border-radius: 8px;
   cursor: pointer;
   pointer-events: auto;
   transition:
     background 0.3s ease,
-    transform 0.2s ease;
+    transform 0.2s ease,
+    box-shadow 0.3s ease;
 }
 
 .submitBtn:hover {
-  background: #a02020;
+  background: #c4b070;
+  box-shadow: 0 4px 16px rgba(181, 161, 98, 0.3);
 }
 
 .submitBtn:active {
   transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(181, 161, 98, 0.2);
 }
 
 /* 按钮加载态 */

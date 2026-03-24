@@ -4,7 +4,7 @@
   border-radius: 14px;
   padding: 10px 14px;
   backdrop-filter: blur(12px);
-  box-shadow: 0 10px 15px 0 rgba(243, 232, 255, 0.5);
+  box-shadow: 0 10px 15px 0 rgba(210, 200, 160, 0.35);
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -12,7 +12,7 @@
 }
 
 .card:hover {
-  box-shadow: 0 12px 20px 0 rgba(230, 215, 255, 0.7);
+  box-shadow: 0 12px 20px 0 rgba(210, 200, 160, 0.5);
   transform: translateY(-2px);
 }
 
@@ -26,7 +26,7 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: rgba(130, 0, 219, 0.08);
+  background: rgba(181, 161, 98, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;

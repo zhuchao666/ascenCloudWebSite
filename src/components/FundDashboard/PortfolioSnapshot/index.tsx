@@ -11,8 +11,8 @@ interface HoldingRow {
 }
 
 const holdings: HoldingRow[] = [
-  { sector: '制造业', ratio: '32.5%', change: '+2.4%', trend: 'up', color: '#8b5cf6' },
-  { sector: '金融业', ratio: '18.6%', change: '-0.8%', trend: 'down', color: '#6366f1' },
+  { sector: '制造业', ratio: '32.5%', change: '+2.4%', trend: 'up', color: '#b5a162' },
+  { sector: '金融业', ratio: '18.6%', change: '-0.8%', trend: 'down', color: '#c4b070' },
   { sector: '信息技术', ratio: '15.2%', change: '+5.2%', trend: 'up', color: '#3b82f6' },
   { sector: '医药生物', ratio: '12.8%', change: '+1.5%', trend: 'up', color: '#06b6d4' },
   { sector: '新能源', ratio: '10.3%', change: '+3.1%', trend: 'up', color: '#10b981' },

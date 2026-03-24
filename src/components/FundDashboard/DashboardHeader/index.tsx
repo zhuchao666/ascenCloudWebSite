@@ -16,7 +16,7 @@ const DashboardHeader = () => {
     <header className={styles.header}>
       <div className={styles.inner}>
         {/* Left: Logo */}
-        <Link href="/dashboard" className={styles.logo}>
+        <Link href="/" className={styles.logo}>
           <LogoIcon />
           <span className={styles.logoText}>出雲资本</span>
         </Link>
@@ -73,8 +73,8 @@ const LogoIcon = () => (
     />
     <defs>
       <linearGradient id="logoGrad" x1="0" y1="0" x2="28" y2="28">
-        <stop offset="0%" stopColor="#8b5cf6" />
-        <stop offset="100%" stopColor="#6366f1" />
+        <stop offset="0%" stopColor="#b5a162" />
+        <stop offset="100%" stopColor="#c4b070" />
       </linearGradient>
     </defs>
   </svg>

@@ -10,8 +10,8 @@ interface Segment {
 }
 
 const segments: Segment[] = [
-  { label: '制造业', value: 32.5, color: '#8b5cf6' },
-  { label: '金融业', value: 18.6, color: '#6366f1' },
+  { label: '制造业', value: 32.5, color: '#b5a162' },
+  { label: '金融业', value: 18.6, color: '#c4b070' },
   { label: '信息技术', value: 15.2, color: '#3b82f6' },
   { label: '其他', value: 33.7, color: '#d1d5db' },
 ];

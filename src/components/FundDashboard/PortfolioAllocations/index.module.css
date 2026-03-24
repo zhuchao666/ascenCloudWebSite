@@ -4,7 +4,7 @@
   border-radius: 16px;
   padding: 24px;
   backdrop-filter: blur(12px);
-  box-shadow: 0 10px 15px 0 rgba(243, 232, 255, 0.5);
+  box-shadow: 0 10px 15px 0 rgba(210, 200, 160, 0.35);
   display: flex;
   flex-direction: column;
 }
@@ -72,7 +72,7 @@
 .centerValue {
   font-size: 18px;
   font-weight: 700;
-  fill: #8b5cf6;
+  fill: #b5a162;
   pointer-events: none;
 }
 
@@ -134,8 +134,8 @@
 .legendCard:hover,
 .legendCardActive {
   background: rgba(255, 255, 255, 0.95);
-  border-color: rgba(139, 92, 246, 0.3);
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.1);
+  border-color: rgba(181, 161, 98, 0.3);
+  box-shadow: 0 2px 8px rgba(181, 161, 98, 0.1);
 }
 
 .legendLeft {

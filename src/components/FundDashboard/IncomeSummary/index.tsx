@@ -146,7 +146,7 @@ const periodDataMap: Record<string, PeriodDataSet> = {
 const periods = ['近3月', '近6月', '近1年', '成立来'] as const;
 
 const legendItems = [
-  { label: '本基金', color: 'linear-gradient(90deg, #9810fa, #155dfc)' },
+  { label: '本基金', color: 'linear-gradient(90deg, #b5a162, #c4b070)' },
   { label: '沪深300', color: '#f59e0b' },
   { label: '上证指数', color: '#10b981' },
 ];
@@ -360,12 +360,12 @@ const IncomeSummary = () => {
         >
           <defs>
             <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.15" />
-              <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.01" />
+              <stop offset="0%" stopColor="#b5a162" stopOpacity="0.15" />
+              <stop offset="100%" stopColor="#b5a162" stopOpacity="0.01" />
             </linearGradient>
             <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#9810fa" />
-              <stop offset="100%" stopColor="#155dfc" />
+              <stop offset="0%" stopColor="#b5a162" />
+              <stop offset="100%" stopColor="#c4b070" />
             </linearGradient>
           </defs>
 
@@ -462,7 +462,7 @@ const IncomeSummary = () => {
                   y1={paddingY}
                   x2={getX(i)}
                   y2={chartH - paddingY}
-                  stroke="#8b5cf6"
+                  stroke="#b5a162"
                   strokeWidth="1"
                   strokeDasharray="4 3"
                   opacity="0.3"
@@ -519,7 +519,7 @@ const IncomeSummary = () => {
               {displayDates[hoveredIndex]}
             </div>
             <div className={styles.tooltipRow}>
-              <span className={styles.tooltipDot} style={{ background: '#8b5cf6' }} />
+              <span className={styles.tooltipDot} style={{ background: '#b5a162' }} />
               <span className={styles.tooltipLabel}>本基金</span>
               <span className={styles.tooltipVal}>
                 {animFund[hoveredIndex].toFixed(2)}%

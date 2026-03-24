@@ -60,7 +60,7 @@
 .navItemActive {
   color: #101828;
   font-weight: 600;
-  background: rgba(139, 92, 246, 0.08);
+  background: rgba(181, 161, 98, 0.1);
 }
 
 /* User Section */
@@ -83,7 +83,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #8b5cf6, #6366f1);
+  background: linear-gradient(135deg, #b5a162, #c4b070);
   display: flex;
   align-items: center;
   justify-content: center;

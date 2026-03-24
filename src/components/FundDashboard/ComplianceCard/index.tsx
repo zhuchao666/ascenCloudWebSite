@@ -39,14 +39,14 @@ const ChartIcon = () => (
   <svg width="14" height="14" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M1.5 13.5L7.125 7.875L10.875 11.625L16.5 6"
-      stroke="#8200db"
+      stroke="#9a8745"
       strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
       d="M12 6H16.5V10.5"
-      stroke="#8200db"
+      stroke="#9a8745"
       strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"

@@ -4,7 +4,7 @@
   border-radius: 16px;
   padding: 24px;
   backdrop-filter: blur(12px);
-  box-shadow: 0 10px 15px 0 rgba(243, 232, 255, 0.5);
+  box-shadow: 0 10px 15px 0 rgba(210, 200, 160, 0.35);
 }
 
 .header {

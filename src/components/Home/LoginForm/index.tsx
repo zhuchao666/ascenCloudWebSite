@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './LoginForm.module.css';
 
 interface LoginFormProps {
@@ -27,22 +28,27 @@ interface LoginFormProps {
  * 键盘从底部弹起时不会影响表单位置，无需 JS 补偿。
  */
 const LoginForm = ({ visible, onClose }: LoginFormProps) => {
+  const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  /** 表单提交 */
+  /** 表单提交 — 登录后跳转到 dashboard */
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (!username.trim() || !password.trim()) {
       return;
     }
     setIsSubmitting(true);
-    // TODO: 对接实际登录接口
+    // TODO: 对接实际登录接口，目前模拟登录成功后直接跳转
     setTimeout(() => {
       setIsSubmitting(false);
+      // 恢复 body 滚动
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      router.push('/dashboard');
     }, 1500);
-  }, [username, password]);
+  }, [username, password, router]);
 
   return (
     <div

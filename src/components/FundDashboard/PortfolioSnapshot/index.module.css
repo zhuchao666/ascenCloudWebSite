@@ -4,7 +4,7 @@
   border-radius: 16px;
   padding: 24px;
   backdrop-filter: blur(12px);
-  box-shadow: 0 10px 15px 0 rgba(243, 232, 255, 0.5);
+  box-shadow: 0 10px 15px 0 rgba(210, 200, 160, 0.35);
 }
 
 .header {
@@ -37,7 +37,7 @@
 .viewAllBtn {
   font-size: 13px;
   font-weight: 500;
-  color: #8200db;
+  color: #9a8745;
   background: none;
   border: none;
   cursor: pointer;
@@ -79,7 +79,7 @@
 }
 
 .tr:hover {
-  background: rgba(130, 0, 219, 0.03);
+  background: rgba(181, 161, 98, 0.04);
 }
 
 .td {

@@ -4,11 +4,6 @@
 
 /* 字体使用 next/font 在 layout.tsx 中通过 CSS 变量注入，不再使用 @import */
 
-:root {
-  /* JS 会实时更新此值为 window.innerHeight，避免 iOS 工具栏导致的抖动 */
-  --vh: 1vh;
-}
-
 *,
 *::before,
 *::after {
@@ -17,70 +12,51 @@
   box-sizing: border-box;
 }
 
-html,
+html {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  background: #f5f3f0;
+}
+
 body {
   width: 100%;
-  max-width: 100%;
-  min-height: 100%;
-  background: #0a0a0a;
+  min-height: 100vh;
+  background: #f5f3f0;
   font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  color: #ffffff;
+  color: #1a1a1a;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-  overscroll-behavior: none;
-  -webkit-overflow-scrolling: auto;
-  /* 禁用浏览器默认触摸手势滚动，由 JS 完全接管翻页 */
-  touch-action: none;
-}
-
-html {
-  /* iOS Safari: 强制限制根元素不超出视口宽度 */
-  overflow: hidden;
   overflow-y: auto;
-  /* 翻页动画由 JS requestAnimationFrame 驱动，不使用 CSS scroll-behavior */
 }
 
-/* 自定义滚动条 — PC 端与深色主题一致 */
+/* 自定义滚动条 — 与浅色主题一致 */
 ::-webkit-scrollbar {
   width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #f5f3f0;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.12);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.2);
 }
 
-/* 隐藏滚动条（首页等全屏翻页页面使用） */
+/* 隐藏滚动条（需要时使用） */
 html.hide-scrollbar,
 html.hide-scrollbar body {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 html.hide-scrollbar::-webkit-scrollbar,
 html.hide-scrollbar body::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
-}
-
-/* 移动端隐藏滚动条 */
-@media (max-width: 768px) {
-  html,
-  body {
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
-  }
-
-  html::-webkit-scrollbar,
-  body::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
-  }
+  display: none;
 }

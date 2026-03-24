@@ -1,24 +1,26 @@
 /* ============================================
-   登录表单 — 玻璃质感风格
+   登录表单 — 浅色主题毛玻璃卡片
    ============================================ */
 
 .formWrapper {
   position: fixed;
   inset: 0;
-  z-index: 10;
+  z-index: 200;
   display: flex;
   /* 表单固定在距顶部一定距离，键盘从底部弹起不影响表单位置 */
   align-items: flex-start;
   justify-content: center;
   padding-top: 18vh;
   pointer-events: none;
-  /* 初始隐藏态 — 表单在视口下方，无过渡（关闭时直接消失） */
+  /* 初始隐藏态 — 表单在视口下方 */
   transform: translateY(100%);
-  /* 隐藏态不可见 — 避免 backdrop-filter 穿透影响背景 */
   visibility: hidden;
+  /* 半透明遮罩背景 */
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   /* 防止 iOS 键盘弹起时容器内部滚动 */
   overflow: hidden;
-  /* 阻止 iOS 橡皮筋效果和触摸滚动 */
   overscroll-behavior: none;
   -webkit-overflow-scrolling: auto;
   touch-action: none;
@@ -29,10 +31,12 @@
   transform: translateY(0);
   pointer-events: auto;
   visibility: visible;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.3s ease;
 }
 
-/* 表单容器 — 毛玻璃卡片 */
+/* 表单容器 — 白色毛玻璃卡片 */
 .form {
   position: relative;
   display: flex;
@@ -41,14 +45,14 @@
   width: 100%;
   max-width: 380px;
   padding: 3rem 2.5rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 16px;
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 /* 右上角关闭按钮 */
@@ -64,7 +68,7 @@
   padding: 0;
   font-size: 0.85rem;
   line-height: 1;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(0, 0, 0, 0.35);
   background: transparent;
   border: 1px solid transparent;
   border-radius: 50%;
@@ -76,9 +80,9 @@
 }
 
 .closeBtn:hover {
-  color: rgba(255, 255, 255, 0.85);
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
 }
 
 .closeBtn:active {
@@ -90,9 +94,8 @@
   font-size: clamp(1.4rem, 3vw, 1.8rem);
   font-weight: 700;
   letter-spacing: 0.05em;
-  color: #ffffff;
+  color: #1a1a1a;
   margin-bottom: 0.5rem;
-  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
 }
 
 /* 表单副标题 */
@@ -100,7 +103,7 @@
   font-size: clamp(0.85rem, 1.2vw, 1rem);
   font-weight: 400;
   letter-spacing: 0.2em;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(0, 0, 0, 0.45);
   margin-bottom: 2.5rem;
 }
 
@@ -117,7 +120,7 @@
   font-weight: 500;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(0, 0, 0, 0.5);
   margin-bottom: 0.5rem;
 }
 
@@ -129,9 +132,9 @@
   font-size: 0.95rem;
   font-weight: 400;
   letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.95);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #1a1a1a;
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 8px;
   outline: none;
   transition:
@@ -141,14 +144,14 @@
 }
 
 .input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(0, 0, 0, 0.3);
   letter-spacing: 0.06em;
 }
 
 .input:focus {
-  border-color: rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06);
+  border-color: #8b1a1a;
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 0 0 3px rgba(139, 26, 26, 0.08);
 }
 
 /* 登录按钮 */
@@ -160,23 +163,19 @@
   font-size: 0.9rem;
   font-weight: 600;
   letter-spacing: 0.3em;
-  color: rgba(255, 255, 255, 0.95);
-  border: 1.5px solid rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border: none;
+  background: #8b1a1a;
   border-radius: 8px;
   cursor: pointer;
   pointer-events: auto;
   transition:
-    color 0.4s ease,
-    border-color 0.4s ease,
-    background 0.4s ease,
+    background 0.3s ease,
     transform 0.2s ease;
 }
 
 .submitBtn:hover {
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.7);
-  background: rgba(255, 255, 255, 0.1);
+  background: #a02020;
 }
 
 .submitBtn:active {

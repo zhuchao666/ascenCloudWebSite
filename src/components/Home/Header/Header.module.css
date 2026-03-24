@@ -1,0 +1,85 @@
+/* ============================================
+   顶部导航栏 — 桥水基金风格
+   ============================================ */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(245, 243, 240, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 clamp(1.5rem, 4vw, 3rem);
+  height: clamp(56px, 8vh, 72px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ---- Logo 区域 ---- */
+.logo {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.logoText {
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #1a1a1a;
+}
+
+.logoSub {
+  font-size: clamp(0.55rem, 0.8vw, 0.7rem);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.35);
+}
+
+/* ---- 登录按钮 ---- */
+.loginBtn {
+  font-family: inherit;
+  font-size: clamp(0.7rem, 0.9vw, 0.8rem);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  background: #b5a162;
+  border: none;
+  padding: 0.55rem 1.5rem;
+  border-radius: 3px;
+  cursor: pointer;
+  transition:
+    background 0.3s ease,
+    transform 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.loginBtn:hover {
+  background: #c4b070;
+}
+
+.loginBtn:active {
+  transform: scale(0.97);
+}
+
+/* ============================================
+   响应式
+   ============================================ */
+@media (max-width: 768px) {
+  .logoSub {
+    display: none;
+  }
+
+  .loginBtn {
+    padding: 0.5rem 1.2rem;
+  }
+}

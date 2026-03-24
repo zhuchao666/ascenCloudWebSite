@@ -1,45 +1,41 @@
 'use client';
 
-import { useCallback } from 'react';
 import styles from './HeroContent.module.css';
 
-interface HeroContentProps {
-  /** 内容是否隐藏（点击按钮后淡出） */
-  hidden: boolean;
-  /** 点击"立即开始"按钮回调 */
-  onEnter: () => void;
-}
-
 /**
- * 首页前景内容组件
+ * 首页首屏 — 左侧格言 + 右侧背景大图
  *
- * 包含：
- * - 主标题（出雲资本）
- * - 中文副标题（拨云见日 洞见未来）
- * - 英文副标题（AscenCloud Investment）
- * - 进入按钮
- *
- * 所有文字元素带入场动画（fadeIn / fadeInUp），
- * 点击按钮后整体淡出，交由父组件显示登录表单。
- * pointer-events: none 确保不阻挡背景交互
+ * 参考桥水基金布局，左侧展示基金核心理念/格言，右侧展示背景图
  */
-const HeroContent = ({ hidden, onEnter }: HeroContentProps) => {
-  /** 点击"立即开始"按钮 — 通知父组件切换到登录状态 */
-  const handleEnter = useCallback(() => {
-    onEnter();
-  }, [onEnter]);
-
+const HeroContent = () => {
   return (
-    <div className={`${styles.content} ${hidden ? styles.contentHidden : ''}`}>
-      <div className={styles.title}>出雲资本</div>
-      <div className={styles.slogan}>拨云见日 洞见未来</div>
-      <div className={styles.subtitle}>AscenCloud Investment</div>
-      <button
-        className={styles.enterBtn}
-        onClick={handleEnter}
-      >
-        立即开始
-      </button>
+    <div className={styles.heroWrapper}>
+      <section className={styles.bgSection}>
+        <div className={styles.bannerCard}>
+          {/* 左侧格言区域 */}
+          <div className={styles.mottoArea}>
+            <h2 className={styles.mottoTitle}>拨云见日，洞见未来</h2>
+            <p className={styles.mottoText}>
+              出雲资本秉承价值投资理念，以深度研究驱动投资决策，致力于发掘并培育具有长期价值的优质企业，为合作伙伴创造可持续的卓越回报。
+            </p>
+            <p className={styles.mottoText}>
+              我们相信，真正的投资智慧在于穿越周期的迷雾，以理性与耐心捕捉时代赋予的确定性机遇。
+            </p>
+          </div>
+
+          {/* 右侧背景图 */}
+          <div className={styles.bgImageWrap}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/bg.jpg"
+              alt="出雲资本"
+              className={styles.bgImage}
+              loading="eager"
+            />
+            <div className={styles.bgOverlay} />
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

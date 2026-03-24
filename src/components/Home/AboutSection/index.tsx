@@ -39,40 +39,63 @@ const AboutSection = () => {
 
   return (
     <section ref={sectionRef} className={styles.section}>
-      {/* 装饰分割线 */}
-      <div className={`${styles.divider} ${visible ? styles.dividerVisible : ''}`} />
+      {/* 上方 — 芒格人物区域（图像 + 格言），更宽 */}
+      <div className={`${styles.heroArea} ${visible ? styles.heroAreaVisible : ''}`}>
+        {/* 芒格照片 */}
+        <div className={styles.photoWrapper}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className={styles.photo}
+            src="https://upload.wikimedia.org/wikipedia/commons/5/56/Charlie_Munger_%28cropped%29.jpg"
+            alt="Charlie Munger — 查理·芒格"
+            loading="lazy"
+          />
+        </div>
 
-      {/* 小标签 */}
-      <div className={`${styles.tag} ${visible ? styles.tagVisible : ''}`}>
-        About Us
+        {/* 格言文字 */}
+        <div className={styles.quoteArea}>
+          <div className={styles.quoteIcon}>&ldquo;</div>
+          <blockquote className={styles.quoteText}>
+            在人生中抓住几个机会，迅速地采取适当的行动，去做简单合乎逻辑的事情，这辈子的财富会得到极大的增长。
+          </blockquote>
+          <div className={styles.quoteAuthor}>— 查理·芒格</div>
+        </div>
       </div>
 
-      {/* 大标题 */}
-      <div className={`${styles.title} ${visible ? styles.titleVisible : ''}`}>
-        关于我们
-      </div>
+      {/* 下方 — 关于我们模块，居中且稍窄 */}
+      <div className={styles.aboutBlock}>
+        {/* 装饰分割线 */}
+        <div className={`${styles.divider} ${visible ? styles.dividerVisible : ''}`} />
 
-      {/* 英文副标题 */}
-      <div className={`${styles.subtitle} ${visible ? styles.subtitleVisible : ''}`}>
-        AscenCloud Investment
-      </div>
+        {/* 小标签 */}
+        <div className={`${styles.tag} ${visible ? styles.tagVisible : ''}`}>
+          About Us
+        </div>
 
-      {/* 描述文本 */}
-      <div className={`${styles.description} ${visible ? styles.descriptionVisible : ''}`}>
-        <p>
-          出雲资本是一家立足全球视野的投资机构，致力于发掘并培育具有长期价值的优质企业。
-          我们秉承「拨云见日，洞见未来」的理念，以深度研究驱动投资决策，
-          为合作伙伴创造可持续的卓越回报。
-        </p>
-        <p>
-          我们的团队汇聚了来自金融、科技、产业等多领域的资深专家，
-          凭借独到的行业洞察和严谨的风险管理体系，
-          在瞬息万变的市场中捕捉确定性机遇，助力企业实现跨越式成长。
-        </p>
-      </div>
+        {/* 大标题 */}
+        <div className={`${styles.title} ${visible ? styles.titleVisible : ''}`}>
+          关于我们
+        </div>
 
-      {/* 底部装饰点 */}
-      <div className={`${styles.dot} ${visible ? styles.dotVisible : ''}`} />
+        {/* 英文副标题 */}
+        <div className={`${styles.subtitle} ${visible ? styles.subtitleVisible : ''}`}>
+          AscenCloud Investment
+        </div>
+
+        {/* 描述文本 */}
+        <div className={`${styles.description} ${visible ? styles.descriptionVisible : ''}`}>
+          <p>
+            出雲资本是一家立足全球视野的投资机构，致力于发掘并培育具有长期价值的优质企业。
+            我们秉承「拨云见日，洞见未来」的理念，以深度研究驱动投资决策，
+            为合作伙伴创造可持续的卓越回报。
+          </p>
+          <p>
+            我们的团队汇聚了来自金融、科技、产业等多领域的资深专家，
+            凭借独到的行业洞察和严谨的风险管理体系，
+            在瞬息万变的市场中捕捉确定性机遇，助力企业实现跨越式成长。
+          </p>
+        </div>
+      </div>
     </section>
   );
 };

@@ -1,130 +1,137 @@
 /* ============================================
-   前景内容层
+   首屏 — 左侧格言 + 右侧背景大图（桥水风格）
    ============================================ */
-.content {
-  position: fixed;
-  inset: 0;
-  z-index: 10;
+
+/* 外层容器 — 米色背景，与芒格区域一致 */
+.heroWrapper {
+  padding-top: clamp(56px, 8vh, 72px); /* 给 Header 留空间 */
+  background: #f5f3f0;
+}
+
+.bgSection {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 3vh, 2.5rem) clamp(1.5rem, 4vw, 3rem);
+}
+
+/* 卡片容器 — 承载左侧格言 + 右侧图片，白色背景 */
+.bannerCard {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  /* 过渡动画 — 点击按钮后整体淡出上移 */
-  transition:
-    opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* 内容隐藏态 — 淡出并上移 */
-.contentHidden {
-  opacity: 0;
-  transform: translateY(-40px);
-  pointer-events: none;
-}
-
-/* 主标题 — 出雲资本 */
-.title {
-  font-size: clamp(2.8rem, 8vw, 7.5rem);
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  line-height: 0.95;
-  text-align: center;
-  color: #ffffff;
-  margin-bottom: 1rem;
-  opacity: 0;
-  animation: fadeInUp 2s ease-out 0.3s forwards;
-  text-shadow: 0 2px 40px rgba(0, 0, 0, 0.3);
-}
-
-/* 中文副标题 — 拨云见日 洞见未来 */
-.slogan {
-  font-size: clamp(0.9rem, 1.5vw, 1.2rem);
-  font-weight: 500;
-  letter-spacing: 0.35em;
-  color: rgba(255, 255, 255, 0.75);
-  margin-bottom: 1.2rem;
-  opacity: 0;
-  animation: fadeIn 2s ease-out 0.8s forwards;
-  text-shadow: 0 1px 20px rgba(0, 0, 0, 0.2);
-}
-
-/* 英文副标题 */
-.subtitle {
-  font-size: clamp(0.7rem, 1.1vw, 0.9rem);
-  font-weight: 500;
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 2.5rem;
-  opacity: 0;
-  animation: fadeIn 2s ease-out 1.2s forwards;
-}
-
-/* 进入按钮 */
-.enterBtn {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.3em;
-  color: rgba(255, 255, 255, 0.85);
-  border: 1.5px solid rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.06);
-  padding: 0.9rem 3rem;
-  cursor: pointer;
-  pointer-events: auto;
-  /* 只过渡 hover 需要的属性，避免点击时 transition: all 引发的闪烁 */
-  transition:
-    color 0.4s ease,
-    border-color 0.4s ease,
-    background-color 0.4s ease;
-  opacity: 0;
-  animation: fadeIn 2s ease-out 1.8s forwards;
-  /* 移动端去除默认点击高亮 */
-  -webkit-tap-highlight-color: transparent;
-}
-
-.enterBtn:hover {
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.7);
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.enterBtn:active {
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.7);
-  background: rgba(255, 255, 255, 0.1);
+  align-items: stretch;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.02),
+    0 12px 48px rgba(0, 0, 0, 0.025);
 }
 
 /* ============================================
-   动画关键帧
+   左侧格言区域
    ============================================ */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+.mottoArea {
+  flex: 0 0 38%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(2rem, 4vw, 3.5rem);
+  background: #ffffff;
+  border-radius: 10px 0 0 10px;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.mottoTag {
+  font-size: clamp(0.65rem, 0.85vw, 0.78rem);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #b5a162;
+  margin-bottom: clamp(0.8rem, 1.5vw, 1.2rem);
+}
+
+.mottoTitle {
+  font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+  color: #1a1a1a;
+  margin: 0 0 clamp(1rem, 2vw, 1.5rem);
+}
+
+.mottoText {
+  font-size: clamp(0.8rem, 1vw, 0.92rem);
+  font-weight: 400;
+  line-height: 1.9;
+  letter-spacing: 0.03em;
+  color: rgba(0, 0, 0, 0.55);
+  margin: 0 0 clamp(0.6rem, 1vw, 1rem);
+}
+
+.mottoText:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================
+   右侧背景图
+   ============================================ */
+.bgImageWrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  border-radius: 0 10px 10px 0;
+  overflow: hidden;
+}
+
+.bgImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.bgOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  pointer-events: none;
 }
 
 /* ============================================
    响应式适配
    ============================================ */
 @media (max-width: 768px) {
-  .title {
-    letter-spacing: 0.03em;
+  .bgSection {
+    padding: clamp(1rem, 2vh, 1.5rem) clamp(1rem, 3vw, 1.5rem) 0;
+  }
+
+  .bannerCard {
+    flex-direction: column;
+  }
+
+  .mottoArea {
+    flex: none;
+    border-radius: 0;
+    padding: clamp(1.5rem, 4vw, 2rem);
+  }
+
+  .bgImageWrap {
+    flex: none;
+    aspect-ratio: 16 / 9;
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .bgSection {
+    padding: 0.8rem 1rem 0;
+  }
+
+  .mottoArea {
+    padding: 1.2rem 1rem;
+  }
+
+  .mottoTitle {
+    font-size: 1.15rem;
   }
 }

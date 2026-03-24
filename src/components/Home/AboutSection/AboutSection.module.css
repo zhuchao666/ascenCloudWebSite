@@ -1,16 +1,16 @@
 /* ============================================
-   关于我们模块 — 浅色背景
+   关于我们模块 — 上方芒格人物+格言（宽），下方关于我们（窄居中）
    ============================================ */
 .section {
   position: relative;
   z-index: 5;
   width: 100%;
-  height: calc(var(--vh, 1vh) * 100);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 6rem 2rem;
+  padding: clamp(3rem, 6vh, 5rem) 0;
+  gap: clamp(2rem, 4vh, 3.5rem);
   background: linear-gradient(
     180deg,
     #f5f3f0 0%,
@@ -20,9 +20,104 @@
     #f5f3f0 100%
   );
   overflow: hidden;
-  /* GPU 合成层提升，避免与首屏 fixed 层频繁重合成 */
-  transform: translateZ(0);
-  backface-visibility: hidden;
+}
+
+/* ============================================
+   上方 — 芒格人物 + 格言区域（比关于我们更宽）
+   ============================================ */
+.heroArea {
+  display: flex;
+  align-items: stretch;
+  gap: clamp(2rem, 4vw, 4rem);
+  width: 100%;
+  max-width: 1100px;
+  padding: 0 clamp(1.5rem, 4vw, 3rem);
+  opacity: 0;
+  transform: translateY(-25px);
+  transition:
+    opacity 1s ease-out 0.2s,
+    transform 1s ease-out 0.2s;
+}
+
+.heroAreaVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 芒格照片容器 — 高度跟随格言区域 */
+.photoWrapper {
+  flex-shrink: 0;
+  width: clamp(120px, 14vw, 180px);
+}
+
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  filter: grayscale(25%) contrast(1.05);
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: filter 0.6s ease;
+}
+
+.photo:hover {
+  filter: grayscale(0%) contrast(1.08);
+}
+
+/* 格言区域 */
+.quoteArea {
+  position: relative;
+  padding-left: clamp(2rem, 3vw, 3.5rem);
+  flex: 1;
+}
+
+/* 大引号装饰 */
+.quoteIcon {
+  position: absolute;
+  top: clamp(-0.2rem, -0.5vw, -0.5rem);
+  left: 0;
+  font-size: clamp(3rem, 5vw, 5rem);
+  font-weight: 700;
+  line-height: 1;
+  color: #f5a623;
+  opacity: 0.35;
+  font-family: Georgia, 'Times New Roman', serif;
+  user-select: none;
+  pointer-events: none;
+}
+
+.quoteText {
+  font-size: clamp(1rem, 1.5vw, 1.35rem);
+  font-weight: 500;
+  line-height: 2;
+  letter-spacing: 0.04em;
+  color: #2a2a2a;
+  margin: 0;
+  padding: 0;
+  border: none;
+  font-style: normal;
+}
+
+.quoteAuthor {
+  margin-top: clamp(0.8rem, 1.5vw, 1.2rem);
+  font-size: clamp(0.75rem, 0.95vw, 0.88rem);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: rgba(0, 0, 0, 0.35);
+}
+
+/* ============================================
+   下方 — 关于我们模块（居中，比上方窄）
+   ============================================ */
+.aboutBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 780px;
+  width: 100%;
+  padding: 0 clamp(1.5rem, 4vw, 2rem);
 }
 
 /* 装饰分割线 */
@@ -30,7 +125,7 @@
   width: 40px;
   height: 1px;
   background: rgba(0, 0, 0, 0.2);
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
   opacity: 0;
   transform: scaleX(0);
   transition:
@@ -50,7 +145,7 @@
   letter-spacing: 0.35em;
   text-transform: uppercase;
   color: rgba(0, 0, 0, 0.4);
-  margin-bottom: 2rem;
+  margin-bottom: 1.2rem;
   opacity: 0;
   transform: translateY(20px);
   transition:
@@ -65,13 +160,13 @@
 
 /* 大标题 */
 .title {
-  font-size: clamp(2.2rem, 6vw, 5rem);
+  font-size: clamp(2rem, 5vw, 3.5rem);
   font-weight: 800;
   letter-spacing: 0.06em;
   line-height: 1.1;
   text-align: center;
   color: #1a1a1a;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   opacity: 0;
   transform: translateY(30px);
   transition:
@@ -91,7 +186,7 @@
   letter-spacing: 0.4em;
   text-transform: uppercase;
   color: rgba(0, 0, 0, 0.35);
-  margin-bottom: 3.5rem;
+  margin-bottom: 2rem;
   opacity: 0;
   transform: translateY(20px);
   transition:
@@ -104,15 +199,17 @@
   transform: translateY(0);
 }
 
-/* 描述文本容器 */
+/* ============================================
+   描述文本
+   ============================================ */
 .description {
-  max-width: 680px;
+  max-width: 720px;
   text-align: center;
   opacity: 0;
   transform: translateY(30px);
   transition:
-    opacity 1s ease-out 0.45s,
-    transform 1s ease-out 0.45s;
+    opacity 1s ease-out 0.4s,
+    transform 1s ease-out 0.4s;
 }
 
 .descriptionVisible {
@@ -121,31 +218,16 @@
 }
 
 .description p {
-  font-size: clamp(0.85rem, 1.2vw, 1rem);
+  font-size: clamp(0.85rem, 1.1vw, 1rem);
   font-weight: 400;
   line-height: 2;
   letter-spacing: 0.04em;
   color: rgba(0, 0, 0, 0.55);
-  margin-bottom: 1.5rem;
+  margin: 0 0 1.2rem;
 }
 
 .description p:last-child {
   margin-bottom: 0;
-}
-
-/* 底部装饰点 */
-.dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.15);
-  margin-top: 3.5rem;
-  opacity: 0;
-  transition: opacity 1s ease-out 0.6s;
-}
-
-.dotVisible {
-  opacity: 1;
 }
 
 /* ============================================
@@ -153,7 +235,37 @@
    ============================================ */
 @media (max-width: 768px) {
   .section {
-    padding: 4rem 1.5rem;
+    padding: 2.5rem 0;
+    gap: 2rem;
+  }
+
+  .heroArea {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+    padding: 0 1.5rem;
+  }
+
+  .quoteArea {
+    padding-left: 2.5rem;
+  }
+
+  .quoteText {
+    font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+  }
+
+  .photoWrapper {
+    width: clamp(120px, 35vw, 180px);
+  }
+
+  .photo {
+    height: auto;
+    aspect-ratio: 3 / 4;
+  }
+
+  .aboutBlock {
+    padding: 0 1.5rem;
   }
 
   .tag {
@@ -168,22 +280,31 @@
     font-size: clamp(0.7rem, 2.5vw, 0.9rem);
   }
 
-  .description {
-    max-width: 520px;
-  }
-
   .description p {
-    font-size: clamp(0.9rem, 3.5vw, 1.05rem);
+    font-size: clamp(0.82rem, 3.2vw, 0.95rem);
     line-height: 1.85;
   }
 }
 
 @media (max-width: 480px) {
   .section {
-    padding: 3rem 1.2rem;
+    padding: 2rem 0;
+    gap: 1.5rem;
   }
 
-  .description {
-    max-width: 100%;
+  .heroArea {
+    padding: 0 1.2rem;
+  }
+
+  .photoWrapper {
+    width: clamp(100px, 30vw, 140px);
+  }
+
+  .quoteIcon {
+    font-size: 2.5rem;
+  }
+
+  .aboutBlock {
+    padding: 0 1.2rem;
   }
 }

@@ -10,7 +10,7 @@ import IncomeSummary from './IncomeSummary';
 const kpiData = [
   {
     label: '基金净值',
-    value: '$248,532.00',
+    value: '¥248,532.00',
     icon: 'portfolio',
   },
   {

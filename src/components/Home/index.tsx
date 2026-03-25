@@ -29,17 +29,11 @@ const Home = () => {
   /** 打开登录弹窗 */
   const handleOpenLogin = useCallback(() => {
     setShowLogin(true);
-    // 锁定 body 滚动
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
   }, []);
 
   /** 关闭登录弹窗 */
   const handleCloseLogin = useCallback(() => {
     setShowLogin(false);
-    // 恢复 body 滚动
-    document.body.style.overflow = '';
-    document.documentElement.style.overflow = '';
   }, []);
 
   return (

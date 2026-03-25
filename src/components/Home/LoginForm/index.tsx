@@ -43,9 +43,6 @@ const LoginForm = ({ visible, onClose }: LoginFormProps) => {
     // TODO: 对接实际登录接口，目前模拟登录成功后直接跳转
     setTimeout(() => {
       setIsSubmitting(false);
-      // 恢复 body 滚动
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
       router.push('/dashboard');
     }, 1500);
   }, [username, password, router]);

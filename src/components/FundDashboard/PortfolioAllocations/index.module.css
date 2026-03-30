@@ -35,7 +35,7 @@
   flex: 1;
 }
 
-/* 半圆仪表盘 */
+/* 半圆仪表盘容器 */
 .gaugeWrap {
   position: relative;
   width: 100%;
@@ -44,43 +44,35 @@
   justify-content: center;
 }
 
-.gaugeSvg {
-  width: 100%;
-  height: auto;
-  overflow: visible;
+/* 中心文字 */
+.centerText {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
 }
 
-.slicePath {
-  transition: opacity 0.2s, transform 0.15s;
-  cursor: pointer;
-  stroke: rgba(255, 255, 255, 0.7);
-  stroke-width: 1;
-}
-
-.slicePath:hover {
-  filter: brightness(1.08);
-}
-
-/* 圆环内部文字 */
 .centerLabel {
   font-size: 11px;
   font-weight: 500;
-  fill: #6a7282;
-  pointer-events: none;
+  color: #6a7282;
 }
 
 .centerValue {
   font-size: 18px;
   font-weight: 700;
-  fill: #b5a162;
-  pointer-events: none;
+  color: #b5a162;
 }
 
 /* Tooltip */
 .tooltip {
-  position: absolute;
   pointer-events: none;
-  transform: translateX(-50%);
   background: rgba(17, 24, 39, 0.88);
   backdrop-filter: blur(8px);
   color: #fff;
@@ -93,7 +85,6 @@
   gap: 6px;
   white-space: nowrap;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 10;
 }
 
 .tooltipDot {

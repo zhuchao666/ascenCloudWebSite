@@ -1,6 +1,14 @@
 'use client';
 
+import { LineChart, Line } from 'recharts';
 import styles from './index.module.css';
+
+/** 持有人信息 */
+interface Holder {
+  name: string;
+  ratio: number;
+  updatedAt: string;
+}
 
 interface AccountCardProps {
   name: string;
@@ -12,44 +20,13 @@ interface AccountCardProps {
   sparkData: number[];
   /** 盈亏方向：正 or 负 */
   isPositive: boolean;
+  /** 是否为集合账户 */
+  isGroup?: boolean;
+  /** 集合账户的持有人列表 */
+  holders?: Holder[];
+  /** 点击集合标签的回调 */
+  onGroupClick?: () => void;
 }
-
-/**
- * 生成平滑的 SVG 曲线路径 (Catmull-Rom → Cubic Bezier)
- */
-const buildSparkPath = (
-  data: number[],
-  width: number,
-  height: number,
-  padding = 4,
-): string => {
-  if (data.length < 2) return '';
-
-  const plotW = width - padding * 2;
-  const plotH = height - padding * 2;
-  const points = data.map((v, i) => ({
-    x: padding + (i / (data.length - 1)) * plotW,
-    y: padding + plotH - v * plotH,
-  }));
-
-  const tension = 0.3;
-  let path = `M ${points[0].x} ${points[0].y}`;
-
-  for (let i = 0; i < points.length - 1; i++) {
-    const p0 = points[Math.max(i - 1, 0)];
-    const p1 = points[i];
-    const p2 = points[i + 1];
-    const p3 = points[Math.min(i + 2, points.length - 1)];
-
-    const cp1x = p1.x + (p2.x - p0.x) * tension;
-    const cp1y = p1.y + (p2.y - p0.y) * tension;
-    const cp2x = p2.x - (p3.x - p1.x) * tension;
-    const cp2y = p2.y - (p3.y - p1.y) * tension;
-
-    path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`;
-  }
-  return path;
-};
 
 const SPARK_W = 100;
 const SPARK_H = 40;
@@ -62,18 +39,38 @@ const AccountCard = ({
   holdingPnlPct,
   sparkData,
   isPositive,
+  isGroup = false,
+  onGroupClick,
 }: AccountCardProps) => {
-  const sparkPath = buildSparkPath(sparkData, SPARK_W, SPARK_H);
   // A 股风格：红涨绿跌
   const strokeColor = isPositive ? '#dc2626' : '#16a34a';
   const pnlClass = isPositive ? styles.positive : styles.negative;
 
+  // 将归一化数组转为 recharts 数据格式
+  const chartData = sparkData.map((v, i) => ({ idx: i, value: v }));
+
+  /** 点击集合标签 */
+  const handleTagClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onGroupClick?.();
+  };
+
   return (
     <div className={styles.card}>
-      {/* 头部：图标 + 名称 */}
+      {/* 头部：图标 + 名称 + 集合标签 */}
       <div className={styles.cardHeader}>
         <div className={styles.accountIcon}>{shortName}</div>
         <span className={styles.accountName}>{name}</span>
+        {isGroup && (
+          <button
+            type="button"
+            className={styles.groupTag}
+            onClick={handleTagClick}
+            title="点击查看持有人比例"
+          >
+            集合
+          </button>
+        )}
       </div>
 
       {/* 中间：总资产 + 迷你曲线 */}
@@ -82,23 +79,21 @@ const AccountCard = ({
           <span className={styles.assetLabel}>总资产</span>
           <span className={styles.assetValue}>{totalAsset}</span>
         </div>
-        <svg
-          className={styles.sparkline}
+        <LineChart
           width={SPARK_W}
           height={SPARK_H}
-          viewBox={`0 0 ${SPARK_W} ${SPARK_H}`}
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
+          data={chartData}
+          className={styles.sparkline}
         >
-          <path
-            d={sparkPath}
+          <Line
+            type="monotone"
+            dataKey="value"
             stroke={strokeColor}
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
+            strokeWidth={2}
+            dot={false}
+            isAnimationActive={false}
           />
-        </svg>
+        </LineChart>
       </div>
 
       {/* 底部：总盈亏 */}

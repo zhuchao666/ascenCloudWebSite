@@ -1,6 +1,7 @@
 'use client';
 
 import styles from './index.module.css';
+import ProgressBar from '../../ProgressBar';
 
 const AccountOverview = () => {
   return (
@@ -49,11 +50,7 @@ const AccountOverview = () => {
           <span className={styles.label}>总仓位</span>
           <span className={styles.value}>78.5%</span>
         </div>
-        <div className={styles.progressWrap}>
-          <div className={styles.progressTrack}>
-            <div className={styles.progressBar} style={{ width: '78.5%' }} />
-          </div>
-        </div>
+        <ProgressBar value={78.5} className={styles.progressWrap} />
       </div>
     </div>
   );

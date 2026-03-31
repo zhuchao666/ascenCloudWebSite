@@ -1,6 +1,7 @@
 'use client';
 
 import styles from './index.module.css';
+import ProgressBar from '../../ProgressBar';
 
 interface KpiCardProps {
   label: string;
@@ -49,14 +50,7 @@ const KpiCard = ({ label, value, icon, progress }: KpiCardProps) => {
       </div>
       <div className={styles.value}>{value}</div>
       {progress !== undefined && (
-        <div className={styles.progressWrap}>
-          <div className={styles.progressTrack}>
-            <div
-              className={styles.progressBar}
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
+        <ProgressBar value={progress} className={styles.progressWrap} />
       )}
     </div>
   );

@@ -6,6 +6,7 @@ import ComplianceCard from './ComplianceCard';
 import PortfolioSnapshot from './PortfolioSnapshot';
 import PortfolioAllocations from './PortfolioAllocations';
 import IncomeSummary from './IncomeSummary';
+import TopShareholders from './TopShareholders';
 
 const kpiData = [
   {
@@ -53,6 +54,11 @@ const FundDashboard = () => {
       <section className={styles.portfolioRow}>
         <PortfolioSnapshot />
         <PortfolioAllocations />
+      </section>
+
+      {/* 十大股东 */}
+      <section className={styles.shareholderRow}>
+        <TopShareholders />
       </section>
     </div>
   );

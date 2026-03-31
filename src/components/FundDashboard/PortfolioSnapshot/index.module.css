@@ -53,12 +53,28 @@
   overflow-x: auto;
 }
 
-.table {
-  width: 100%;
-  border-collapse: collapse;
+/* rc-table 默认边框重置 */
+.table,
+.table :global(table),
+.table :global(.rc-table),
+.table :global(.rc-table-content),
+.table :global(.rc-table-thead) th,
+.table :global(.rc-table-tbody) td,
+.table :global(.rc-table-placeholder) td {
+  border: none;
 }
 
-.th {
+.table :global(table) {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* rc-table 样式覆盖 */
+.table {
+  width: 100%;
+}
+
+.table :global(.rc-table-thead) th {
   font-size: 12px;
   font-weight: 500;
   color: #6a7282;
@@ -68,30 +84,24 @@
   text-align: left;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   white-space: nowrap;
+  background: transparent;
 }
 
-.thRight {
-  text-align: right;
-}
-
-.tr {
-  transition: background 0.15s;
-}
-
-.tr:hover {
-  background: rgba(181, 161, 98, 0.04);
-}
-
-.td {
+.table :global(.rc-table-tbody) td {
   padding: 14px 12px;
   font-size: 13px;
   color: #4a5565;
   border-bottom: 1px solid rgba(0, 0, 0, 0.04);
   white-space: nowrap;
+  transition: background 0.15s;
 }
 
-.tdRight {
-  text-align: right;
+.table :global(.rc-table-tbody) tr:last-child td {
+  border-bottom: none;
+}
+
+.table :global(.rc-table-tbody) tr:hover td {
+  background: rgba(181, 161, 98, 0.08);
 }
 
 .tdBold {

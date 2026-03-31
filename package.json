@@ -11,6 +11,7 @@
   "dependencies": {
     "next": "^14.2.0",
     "rc-drawer": "^7.3.0",
+    "rc-table": "^7.55.1",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
     "recharts": "^3.8.1",

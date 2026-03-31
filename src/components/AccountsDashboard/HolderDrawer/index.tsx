@@ -1,8 +1,11 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import Drawer from 'rc-drawer';
 import 'rc-drawer/assets/index.css';
+import Table from 'rc-table';
+import type { ColumnsType } from 'rc-table/lib/interface';
+import 'rc-table/assets/index.css';
 import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 import styles from './index.module.css';
 
@@ -11,6 +14,8 @@ export interface Holder {
   name: string;
   /** 持有比例，如 0.35 表示 35% */
   ratio: number;
+  /** 持有金额（元） */
+  amount: number;
   /** 更新时间 */
   updatedAt: string;
 }
@@ -118,7 +123,7 @@ interface EditState {
   /** -1 表示新增行, >=0 表示正在编辑的行索引 */
   index: number;
   name: string;
-  ratio: string;
+  amount: string;
 }
 
 /**
@@ -183,7 +188,7 @@ const HolderDrawer = ({
 
   /** 开始新增 */
   const handleAdd = useCallback(() => {
-    setEditState({ index: -1, name: '', ratio: '' });
+    setEditState({ index: -1, name: '', amount: '' });
   }, []);
 
   /** 开始编辑 */
@@ -193,7 +198,7 @@ const HolderDrawer = ({
       setEditState({
         index: idx,
         name: h.name,
-        ratio: (h.ratio * 100).toFixed(0),
+        amount: String(h.amount),
       });
     },
     [holders],
@@ -204,23 +209,32 @@ const HolderDrawer = ({
     if (!editState) return;
 
     const trimmedName = editState.name.trim();
-    const ratioNum = Number(editState.ratio);
-    if (!trimmedName || Number.isNaN(ratioNum) || ratioNum <= 0 || ratioNum > 100) return;
+    const amountNum = Number(editState.amount);
+    if (!trimmedName) return;
+    if (Number.isNaN(amountNum) || amountNum < 0) return;
 
     const updated = [...holders];
-    const newHolder: Holder = {
+    const placeholder: Holder = {
       name: trimmedName,
-      ratio: ratioNum / 100,
+      ratio: 0,
+      amount: amountNum,
       updatedAt: getNow(),
     };
 
     if (editState.index === -1) {
-      updated.push(newHolder);
+      updated.push(placeholder);
     } else {
-      updated[editState.index] = newHolder;
+      updated[editState.index] = placeholder;
     }
 
-    onHoldersChange(updated);
+    // 根据金额自动计算每个人的比例
+    const totalAmount = updated.reduce((sum, h) => sum + h.amount, 0);
+    const recalculated = updated.map((h) => ({
+      ...h,
+      ratio: totalAmount > 0 ? h.amount / totalAmount : 0,
+    }));
+
+    onHoldersChange(recalculated);
     setEditState(null);
   }, [editState, holders, onHoldersChange]);
 
@@ -247,6 +261,205 @@ const HolderDrawer = ({
     name: h.name,
     value: Number((h.ratio * 100).toFixed(1)),
   }));
+
+  // ===== rc-table 行数据类型 =====
+  interface TableRow {
+    key: string;
+    /** 原始索引（在 holders 中的位置），新增行为 -1 */
+    idx: number;
+    name: string;
+    amount: number;
+    ratio: number;
+    updatedAt: string;
+    /** 是否为编辑 / 新增态 */
+    editing: boolean;
+  }
+
+  // ===== 构建 dataSource =====
+  const tableData: TableRow[] = useMemo(() => {
+    const rows: TableRow[] = holders
+      .map((h, idx) => {
+        // 搜索过滤（编辑行不过滤）
+        const isEditing = editState && editState.index === idx;
+        if (
+          searchText
+          && !isEditing
+          && !h.name.toLowerCase().includes(searchText.toLowerCase())
+        ) {
+          return null;
+        }
+        return {
+          key: `holder-${idx}`,
+          idx,
+          name: h.name,
+          amount: h.amount,
+          ratio: h.ratio,
+          updatedAt: h.updatedAt,
+          editing: !!(editState && editState.index === idx),
+        };
+      })
+      .filter((r): r is TableRow => r !== null);
+
+    // 新增行
+    if (editState && editState.index === -1) {
+      rows.push({
+        key: 'new-row',
+        idx: -1,
+        name: '',
+        amount: 0,
+        ratio: 0,
+        updatedAt: '-',
+        editing: true,
+      });
+    }
+
+    return rows;
+  }, [holders, editState, searchText]);
+
+  // ===== 编辑行比例预览计算 =====
+  const getPreviewRatio = (idx: number): string => {
+    if (!editState) return '0.0';
+    const editAmount = Number(editState.amount) || 0;
+    if (idx === -1) {
+      // 新增行
+      const currentTotal = holders.reduce((sum, item) => sum + item.amount, 0);
+      const previewTotal = currentTotal + editAmount;
+      return previewTotal > 0 ? (editAmount / previewTotal * 100).toFixed(1) : '0.0';
+    }
+    // 编辑行
+    const otherTotal = holders.reduce((sum, item, i) => i === idx ? sum : sum + item.amount, 0);
+    const previewTotal = otherTotal + editAmount;
+    return previewTotal > 0 ? (editAmount / previewTotal * 100).toFixed(1) : '0.0';
+  };
+
+  // ===== rc-table columns 定义 =====
+  const columns: ColumnsType<TableRow> = useMemo(() => [
+    {
+      title: '姓名',
+      dataIndex: 'name',
+      key: 'name',
+      width: 90,
+      render: (_: string, record: TableRow) => {
+        if (record.editing && editState) {
+          return (
+            <input
+              className={styles.editInput}
+              value={editState.name}
+              onChange={(e) => setEditState({ ...editState, name: e.target.value })}
+              placeholder="姓名"
+              autoFocus
+            />
+          );
+        }
+        const holderIdx = record.idx;
+        return (
+          <div className={styles.nameCell}>
+            <span
+              className={styles.holderDot}
+              style={{ backgroundColor: PIE_COLORS[holderIdx % PIE_COLORS.length] }}
+            />
+            {record.name}
+          </div>
+        );
+      },
+    },
+    {
+      title: '金额',
+      dataIndex: 'amount',
+      key: 'amount',
+      width: 160,
+      render: (_: number, record: TableRow) => {
+        if (record.editing && editState) {
+          return (
+            <input
+              className={`${styles.editInput} ${styles.amountInput}`}
+              value={editState.amount}
+              onChange={(e) => setEditState({ ...editState, amount: e.target.value })}
+              placeholder="金额"
+              type="number"
+              min="0"
+            />
+          );
+        }
+        return (
+          <span className={styles.amountCell}>
+            ¥{record.amount.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
+        );
+      },
+    },
+    {
+      title: '比例',
+      dataIndex: 'ratio',
+      key: 'ratio',
+      width: 70,
+      render: (_: number, record: TableRow) => {
+        if (record.editing) {
+          return <span className={styles.ratioCell}>{getPreviewRatio(record.idx)}%</span>;
+        }
+        return <span className={styles.ratioCell}>{(record.ratio * 100).toFixed(1)}%</span>;
+      },
+    },
+    {
+      title: '更新时间',
+      dataIndex: 'updatedAt',
+      key: 'updatedAt',
+      render: (_: string, record: TableRow) => {
+        if (record.editing) {
+          return <span className={styles.timeCell}>-</span>;
+        }
+        return <span className={styles.timeCell}>{record.updatedAt}</span>;
+      },
+    },
+    {
+      title: '操作',
+      key: 'actions',
+      width: 100,
+      align: 'right' as const,
+      render: (_: unknown, record: TableRow) => {
+        if (record.editing) {
+          return (
+            <div className={styles.actionsCell}>
+              <TooltipButton
+                tooltip="保存"
+                className={`${styles.actionBtn} ${styles.saveBtn}`}
+                onClick={handleSave}
+              >
+                <CheckIcon />
+              </TooltipButton>
+              <TooltipButton
+                tooltip="取消"
+                className={`${styles.actionBtn} ${styles.cancelBtn}`}
+                onClick={handleCancel}
+              >
+                <CloseIcon />
+              </TooltipButton>
+            </div>
+          );
+        }
+        return (
+          <div className={styles.actionsCell}>
+            <TooltipButton
+              tooltip="编辑"
+              className={styles.actionBtn}
+              onClick={() => handleEdit(record.idx)}
+              disabled={editState !== null}
+            >
+              <EditIcon />
+            </TooltipButton>
+            <TooltipButton
+              tooltip="删除"
+              className={`${styles.actionBtn} ${styles.deleteBtn}`}
+              onClick={() => handleDelete(record.idx)}
+              disabled={editState !== null}
+            >
+              <DeleteIcon />
+            </TooltipButton>
+          </div>
+        );
+      },
+    },
+  ], [editState, holders, handleSave, handleCancel, handleEdit, handleDelete]);
 
   return (
     <Drawer
@@ -375,170 +588,17 @@ const HolderDrawer = ({
             </div>
           </div>
 
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>姓名</th>
-                <th>比例</th>
-                <th>更新时间</th>
-                <th style={{ textAlign: 'right' }}>操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              {holders.map((h, idx) => {
-                // 搜索过滤：如果有搜索文本，隐藏不匹配的行（编辑行除外）
-                const isEditing = editState && editState.index === idx;
-                if (
-                  searchText
-                  && !isEditing
-                  && !h.name.toLowerCase().includes(searchText.toLowerCase())
-                ) {
-                  return null;
-                }
-                // 编辑态
-                if (editState && editState.index === idx) {
-                  return (
-                    <tr key={`edit-${idx}`}>
-                      <td>
-                        <input
-                          className={styles.editInput}
-                          value={editState.name}
-                          onChange={(e) =>
-                            setEditState({ ...editState, name: e.target.value })
-                          }
-                          placeholder="姓名"
-                          autoFocus
-                        />
-                      </td>
-                      <td>
-                        <input
-                          className={`${styles.editInput} ${styles.ratioInput}`}
-                          value={editState.ratio}
-                          onChange={(e) =>
-                            setEditState({ ...editState, ratio: e.target.value })
-                          }
-                          placeholder="%"
-                          type="number"
-                          min="0"
-                          max="100"
-                        />
-                      </td>
-                      <td className={styles.timeCell}>-</td>
-                      <td className={styles.actionsCell}>
-                        <TooltipButton
-                          tooltip="保存"
-                          className={`${styles.actionBtn} ${styles.saveBtn}`}
-                          onClick={handleSave}
-                        >
-                          <CheckIcon />
-                        </TooltipButton>
-                        <TooltipButton
-                          tooltip="取消"
-                          className={`${styles.actionBtn} ${styles.cancelBtn}`}
-                          onClick={handleCancel}
-                        >
-                          <CloseIcon />
-                        </TooltipButton>
-                      </td>
-                    </tr>
-                  );
-                }
-
-                // 展示态
-                return (
-                  <tr key={h.name}>
-                    <td>
-                      <div className={styles.nameCell}>
-                        <span
-                          className={styles.holderDot}
-                          style={{
-                            backgroundColor: PIE_COLORS[idx % PIE_COLORS.length],
-                          }}
-                        />
-                        {h.name}
-                      </div>
-                    </td>
-                    <td className={styles.ratioCell}>
-                      {(h.ratio * 100).toFixed(0)}%
-                    </td>
-                    <td className={styles.timeCell}>{h.updatedAt}</td>
-                    <td className={styles.actionsCell}>
-                      <TooltipButton
-                        tooltip="编辑"
-                        className={styles.actionBtn}
-                        onClick={() => handleEdit(idx)}
-                        disabled={editState !== null}
-                      >
-                        <EditIcon />
-                      </TooltipButton>
-                      <TooltipButton
-                        tooltip="删除"
-                        className={`${styles.actionBtn} ${styles.deleteBtn}`}
-                        onClick={() => handleDelete(idx)}
-                        disabled={editState !== null}
-                      >
-                        <DeleteIcon />
-                      </TooltipButton>
-                    </td>
-                  </tr>
-                );
-              })}
-
-              {/* 新增行 */}
-              {editState && editState.index === -1 && (
-                <tr>
-                  <td>
-                    <input
-                      className={styles.editInput}
-                      value={editState.name}
-                      onChange={(e) =>
-                        setEditState({ ...editState, name: e.target.value })
-                      }
-                      placeholder="姓名"
-                      autoFocus
-                    />
-                  </td>
-                  <td>
-                    <input
-                      className={`${styles.editInput} ${styles.ratioInput}`}
-                      value={editState.ratio}
-                      onChange={(e) =>
-                        setEditState({ ...editState, ratio: e.target.value })
-                      }
-                      placeholder="%"
-                      type="number"
-                      min="0"
-                      max="100"
-                    />
-                  </td>
-                  <td className={styles.timeCell}>-</td>
-                  <td className={styles.actionsCell}>
-                    <TooltipButton
-                      tooltip="保存"
-                      className={`${styles.actionBtn} ${styles.saveBtn}`}
-                      onClick={handleSave}
-                    >
-                      <CheckIcon />
-                    </TooltipButton>
-                    <TooltipButton
-                      tooltip="取消"
-                      className={`${styles.actionBtn} ${styles.cancelBtn}`}
-                      onClick={handleCancel}
-                    >
-                      <CloseIcon />
-                    </TooltipButton>
-                  </td>
-                </tr>
-              )}
-
-              {/* 空状态 */}
-              {holders.length === 0 && !editState && (
-                <tr className={styles.emptyRow}>
-                  <td colSpan={4}>暂无持有人，点击上方按钮新增</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          <Table
+            className={styles.table}
+            columns={columns}
+            data={tableData}
+            rowKey="key"
+            emptyText={
+              !editState ? (
+                <span className={styles.emptyText}>暂无持有人，点击上方按钮新增</span>
+              ) : null
+            }
+          />
         </div>
       </div>
     </Drawer>

@@ -127,15 +127,18 @@
   background: rgba(181, 161, 98, 0.12);
   border: 1px solid rgba(181, 161, 98, 0.3);
   border-radius: 4px;
-  cursor: pointer;
   flex-shrink: 0;
-  transition: background 0.2s, border-color 0.2s;
+  pointer-events: none;
   font-family: inherit;
 }
 
-.groupTag:hover {
-  background: rgba(181, 161, 98, 0.22);
-  border-color: rgba(181, 161, 98, 0.5);
+/* 集合卡片可点击 */
+.cardClickable {
+  cursor: pointer;
+}
+
+.cardClickable:hover {
+  box-shadow: 0 12px 24px 0 rgba(181, 161, 98, 0.45);
 }
 
 

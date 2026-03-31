@@ -1,5 +1,8 @@
 'use client';
 
+import Table from 'rc-table';
+import type { ColumnsType } from 'rc-table/lib/interface';
+import 'rc-table/assets/index.css';
 import styles from './index.module.css';
 
 interface HoldingRow {
@@ -20,6 +23,43 @@ const holdings: HoldingRow[] = [
   { sector: '其他', ratio: '4.2%', change: '+0.3%', trend: 'up', color: '#9ca3af' },
 ];
 
+const columns: ColumnsType<HoldingRow> = [
+  {
+    title: '板块名称',
+    dataIndex: 'sector',
+    key: 'sector',
+    render: (_: string, record: HoldingRow) => (
+      <div className={styles.assetCell}>
+        <div
+          className={styles.assetDot}
+          style={{ background: record.color }}
+        />
+        <span className={styles.assetSymbol}>{record.sector}</span>
+      </div>
+    ),
+  },
+  {
+    title: '持仓占比',
+    dataIndex: 'ratio',
+    key: 'ratio',
+    align: 'right' as const,
+    render: (value: string) => (
+      <span className={styles.tdBold}>{value}</span>
+    ),
+  },
+  {
+    title: '较上次披露变化',
+    dataIndex: 'change',
+    key: 'change',
+    align: 'right' as const,
+    render: (_: string, record: HoldingRow) => (
+      <span className={record.trend === 'up' ? styles.changeUp : styles.changeDown}>
+        {record.change}
+      </span>
+    ),
+  },
+];
+
 const PortfolioSnapshot = () => {
   return (
     <div className={styles.card}>
@@ -31,36 +71,12 @@ const PortfolioSnapshot = () => {
       </div>
 
       <div className={styles.tableWrap}>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th className={styles.th}>板块名称</th>
-              <th className={`${styles.th} ${styles.thRight}`}>持仓占比</th>
-              <th className={`${styles.th} ${styles.thRight}`}>较上次披露变化</th>
-            </tr>
-          </thead>
-          <tbody>
-            {holdings.map((row) => (
-              <tr key={row.sector} className={styles.tr}>
-                <td className={styles.td}>
-                  <div className={styles.assetCell}>
-                    <div
-                      className={styles.assetDot}
-                      style={{ background: row.color }}
-                    />
-                    <span className={styles.assetSymbol}>{row.sector}</span>
-                  </div>
-                </td>
-                <td className={`${styles.td} ${styles.tdRight} ${styles.tdBold}`}>{row.ratio}</td>
-                <td className={`${styles.td} ${styles.tdRight}`}>
-                  <span className={row.trend === 'up' ? styles.changeUp : styles.changeDown}>
-                    {row.change}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <Table
+          className={styles.table}
+          columns={columns}
+          data={holdings}
+          rowKey="sector"
+        />
       </div>
     </div>
   );

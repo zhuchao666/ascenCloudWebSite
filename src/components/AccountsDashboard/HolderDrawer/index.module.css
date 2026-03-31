@@ -365,48 +365,79 @@
   line-height: 1;
 }
 
-/* 表格 */
-.table {
-  width: 100%;
+/* 表格 — rc-table 默认边框全面重置 */
+.table,
+.table :global(table),
+.table :global(.rc-table),
+.table :global(.rc-table-content),
+.table :global(.rc-table-thead) th,
+.table :global(.rc-table-tbody) td,
+.table :global(.rc-table-placeholder) td {
+  border: none;
+}
+
+.table :global(table) {
   border-collapse: separate;
   border-spacing: 0;
 }
 
-.table th {
+/* 表格 — rc-table 样式覆盖 */
+.table {
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table :global(.rc-table-thead) th {
   padding: 10px 12px;
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #6a7282;
-  background: rgba(0, 0, 0, 0.025);
+  background: transparent;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   text-align: left;
 }
 
-.table th:first-child {
+.table :global(.rc-table-thead) th:first-child {
   border-radius: 8px 0 0 0;
 }
 
-.table th:last-child {
+.table :global(.rc-table-thead) th:last-child {
   border-radius: 0 8px 0 0;
   text-align: right;
 }
 
-.table td {
+.table :global(.rc-table-tbody) td {
   padding: 10px 12px;
   font-size: 13px;
   color: #344054;
   border-bottom: 1px solid rgba(0, 0, 0, 0.04);
   vertical-align: middle;
+  transition: background 0.15s;
 }
 
-.table tr:last-child td {
+.table :global(.rc-table-tbody) tr:last-child td {
   border-bottom: none;
 }
 
-.table tr:hover td {
-  background: rgba(181, 161, 98, 0.04);
+.table :global(.rc-table-tbody) tr:hover td {
+  background: rgba(181, 161, 98, 0.08);
+}
+
+/* rc-table 空状态 */
+.table :global(.rc-table-placeholder) td {
+  text-align: center;
+  padding: 24px 12px;
+  color: #6a7282;
+  font-size: 13px;
+}
+
+.emptyText {
+  color: #6a7282;
+  font-size: 13px;
 }
 
 /* 表格内的单元格内容 */
@@ -425,6 +456,12 @@
 
 .ratioCell {
   font-weight: 600;
+  color: #101828;
+}
+
+.amountCell {
+  font-size: 13px;
+  font-weight: 500;
   color: #101828;
 }
 
@@ -508,9 +545,9 @@
   color: rgba(0, 0, 0, 0.25);
 }
 
-.ratioInput {
-  width: 70px;
-  text-align: center;
+.amountInput {
+  width: 150px;
+  text-align: right;
 }
 
 .saveBtn {
@@ -534,14 +571,6 @@
   background: rgba(0, 0, 0, 0.06);
   color: rgba(0, 0, 0, 0.7);
   border-color: rgba(0, 0, 0, 0.2);
-}
-
-/* ===== 空状态 ===== */
-.emptyRow td {
-  text-align: center;
-  padding: 24px 12px;
-  color: #6a7282;
-  font-size: 13px;
 }
 
 /* ===== 响应式 ===== */

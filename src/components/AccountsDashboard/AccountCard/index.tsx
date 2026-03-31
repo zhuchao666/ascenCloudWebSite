@@ -49,27 +49,27 @@ const AccountCard = ({
   // 将归一化数组转为 recharts 数据格式
   const chartData = sparkData.map((v, i) => ({ idx: i, value: v }));
 
-  /** 点击集合标签 */
-  const handleTagClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onGroupClick?.();
+  /** 点击集合卡片 */
+  const handleCardClick = () => {
+    if (isGroup) {
+      onGroupClick?.();
+    }
   };
 
   return (
-    <div className={styles.card}>
+    <div
+      className={`${styles.card} ${isGroup ? styles.cardClickable : ''}`}
+      onClick={handleCardClick}
+      role={isGroup ? 'button' : undefined}
+      tabIndex={isGroup ? 0 : undefined}
+      onKeyDown={isGroup ? (e) => { if (e.key === 'Enter' || e.key === ' ') handleCardClick(); } : undefined}
+    >
       {/* 头部：图标 + 名称 + 集合标签 */}
       <div className={styles.cardHeader}>
         <div className={styles.accountIcon}>{shortName}</div>
         <span className={styles.accountName}>{name}</span>
         {isGroup && (
-          <button
-            type="button"
-            className={styles.groupTag}
-            onClick={handleTagClick}
-            title="点击查看持有人比例"
-          >
-            集合
-          </button>
+          <span className={styles.groupTag}>集合</span>
         )}
       </div>
 
